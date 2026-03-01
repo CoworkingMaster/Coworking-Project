@@ -44,7 +44,7 @@ const plans = [
 
 export default function PricingSection({ onShowToast }) {
   const [isAnnual, setIsAnnual] = useState(false)
-  const [sectionRef, isVisible] = useIntersectionObserver()
+  const sectionRef = useIntersectionObserver()
 
   const getPrice = (monthly) => {
     if (isAnnual) return Math.round(monthly * 0.8)
@@ -54,14 +54,14 @@ export default function PricingSection({ onShowToast }) {
   return (
     <section id="pricing" className="section pricing-section" ref={sectionRef}>
       <div className="container">
-        <div className={`section-header fade-in ${isVisible ? 'visible' : ''}`}>
+        <div className="section-header fade-in">
           <span className="section-label">Precios</span>
           <h2>Planes flexibles para cada necesidad</h2>
           <p className="section-subtitle">Sin compromisos, cancela cuando quieras</p>
         </div>
 
         {/* Toggle */}
-        <div className={`pricing-toggle fade-in ${isVisible ? 'visible' : ''}`}>
+        <div className="pricing-toggle fade-in">
           <span className={!isAnnual ? 'active' : ''}>Mensual</span>
           <button
             className={`toggle-switch ${isAnnual ? 'active' : ''}`}
@@ -79,7 +79,7 @@ export default function PricingSection({ onShowToast }) {
         <div className="pricing-grid">
           {plans.map((plan, i) => (
             <div
-              className={`pricing-card fade-in ${isVisible ? 'visible' : ''} ${plan.featured ? 'featured' : ''}`}
+              className={`pricing-card fade-in ${plan.featured ? 'featured' : ''}`}
               style={{ transitionDelay: `${i * 100}ms` }}
               key={plan.name}
             >

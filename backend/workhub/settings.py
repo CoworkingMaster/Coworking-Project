@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     # Third party
     'rest_framework',
     'corsheaders',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -88,16 +89,13 @@ if os.getenv('DB_HOST'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.getenv('DB_NAME', 'workhub_db'),
-            'USER': os.getenv('DB_USER', 'workhub_user'),
-            'PASSWORD': os.getenv('DB_PASSWORD', ''),
-            'HOST': os.getenv('DB_HOST', 'db'),
-            'PORT': os.getenv('DB_PORT', '3306'),
-            'OPTIONS': {
-                'charset': 'utf8mb4',
+            'NAME': 'workhub_db',
+            'USER': 'workhub_user',
+            'PASSWORD': 'workhub_pass123',
+            'HOST': 'db',
+            'PORT': '3306',
             },
         }
-    }
 else:
     DATABASES = {
         'default': {
@@ -163,3 +161,4 @@ CORS_ALLOWED_ORIGINS = os.getenv(
     'http://localhost:5173,http://127.0.0.1:5173'
 ).split(',')
 CORS_ALLOW_CREDENTIALS = True
+AUTH_USER_MODEL = "users.User"

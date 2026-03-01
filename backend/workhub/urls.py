@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.http import JsonResponse
-
+from users.views import register
 
 def health_check(request):
     """Endpoint de salud para verificar que el backend está activo."""
@@ -27,5 +27,6 @@ def health_check(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/health/', health_check, name='health-check'),
+    path('api/register/', register, name='register'),
     # path('api/', include('apps.api.urls')),  # Descomentar cuando se cree la app API
 ]

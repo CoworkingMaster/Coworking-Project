@@ -3,7 +3,7 @@ import useIntersectionObserver from '../hooks/useIntersectionObserver'
 import './ContactSection.css'
 
 export default function ContactSection({ onShowToast }) {
-  const [sectionRef, isVisible] = useIntersectionObserver()
+  const sectionRef = useIntersectionObserver()
 
   const [form, setForm] = useState({
     name: '',
@@ -25,7 +25,7 @@ export default function ContactSection({ onShowToast }) {
   return (
     <section id="contact" className="section contact-section" ref={sectionRef}>
       <div className="container">
-        <div className={`section-header fade-in ${isVisible ? 'visible' : ''}`}>
+        <div className="section-header">
           <span className="section-label">Contacto</span>
           <h2>¿Tienes alguna pregunta?</h2>
           <p className="section-subtitle">
@@ -33,7 +33,7 @@ export default function ContactSection({ onShowToast }) {
           </p>
         </div>
 
-        <div className={`contact-grid fade-in ${isVisible ? 'visible' : ''}`}>
+        <div className="contact grid fade-in">
           {/* Info */}
           <div className="contact-info">
             <div className="contact-info-card">

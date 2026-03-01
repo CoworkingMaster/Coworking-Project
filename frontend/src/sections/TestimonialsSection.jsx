@@ -29,12 +29,12 @@ const testimonials = [
 ]
 
 export default function TestimonialsSection() {
-  const [sectionRef, isVisible] = useIntersectionObserver()
+  const sectionRef = useIntersectionObserver()
 
   return (
     <section id="testimonials" className="section testimonials-section" ref={sectionRef}>
       <div className="container">
-        <div className={`section-header fade-in ${isVisible ? 'visible' : ''}`}>
+        <div className="section-header fade-in">
           <span className="section-label">Testimonios</span>
           <h2>Lo que dicen nuestros miembros</h2>
           <p className="section-subtitle">
@@ -45,7 +45,7 @@ export default function TestimonialsSection() {
         <div className="testimonials-grid">
           {testimonials.map((t, i) => (
             <div
-              className={`testimonial-card fade-in ${isVisible ? 'visible' : ''}`}
+              className="testimonial-card fade-in"
               style={{ transitionDelay: `${i * 100}ms` }}
               key={t.name}
             >
