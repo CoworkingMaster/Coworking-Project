@@ -11,7 +11,9 @@ def register(request):
 
     email = request.data.get('email')
     password = request.data.get('password')
-    role = request.data.get('role')
+    first_name = request.data.get('firstName', '')
+    last_name = request.data.get('lastName', '')
+    role = request.data.get('role', 'standard')
 
     if not email or not password:
         return Response(
@@ -35,7 +37,9 @@ def register(request):
         username=email,
         email=email,
         password=password,
-        role=role
+        first_name=first_name,
+        last_name=last_name,
+        role=role,
     )
 
     return Response(
@@ -43,7 +47,9 @@ def register(request):
             "message": "Usuario creado correctamente",
             "user": {
                 "email": user.email,
-                "role": user.role
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "role": user.role,
             }
         },
         status=status.HTTP_201_CREATED
