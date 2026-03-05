@@ -1,6 +1,6 @@
 services:
   # ──────────────────────────────────────────────
-  # Base de datos MySQL 8.0
+  # Base de datos — MySQL 8.0
   # ──────────────────────────────────────────────
   db:
     image: mysql:8.0
@@ -13,21 +13,22 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+      interval: 5s
+      timeout: 3s
+      retries: 15
+      start_period: 20s
     networks:
       - workhub-net
 
   # ──────────────────────────────────────────────
   # Backend — Django API
+  # (imagen final sin build tools gracias al multi-stage)
   # ──────────────────────────────────────────────
   backend:
     build:
@@ -66,8 +67,9 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./frontend/src:/app/src        # solo el código fuente, HMR instantáneo
+      - ./frontend/public:/app/public
+      - ./frontend/index.html:/app/index.html
     depends_on:
       - backend
     networks:

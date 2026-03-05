@@ -1,0 +1,33 @@
+# Excluir de la imagen Docker — el mayor ahorro es node_modules
+# (se instalan dentro del contenedor con npm install)
+
+# Dependencias
+node_modules/
+
+# Build output
+dist/
+.vite/
+
+# Variables de entorno locales
+.env.local
+.env.*.local
+
+# Git
+.git/
+.gitignore
+
+# Editores y OS
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Docs innecesarias en la imagen
+README.md

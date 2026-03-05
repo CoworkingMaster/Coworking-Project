@@ -1,15 +1,13 @@
 # ──────────────────────────────────────────────
-# Backend — Django API (modo desarrollo)
+# Stage 1 — Builder: compila wheels con herramientas de build
+# (compilador + headers de MariaDB solo aquí, no en la imagen final)
 # ──────────────────────────────────────────────
-FROM python:3.11-slim
+FROM python:3.12-slim AS builder
 
-# Evitar .pyc y buffering
 ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
 
-WORKDIR /app
+WORKDIR /build
 
-# Dependencias del sistema para mysqlclient
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
        default-libmysqlclient-dev \
@@ -17,14 +15,34 @@ RUN apt-get update \
        pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-# Instalar dependencias Python
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip wheel --no-cache-dir --wheel-dir /wheels -r requirements.txt
 
-# Copiar el código fuente
+# ──────────────────────────────────────────────
+# Stage 2 — Runtime: imagen final limpia y ligera
+# Sin compilador, sin headers; solo lo necesario en producción/dev
+# ──────────────────────────────────────────────
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Solo la librería de runtime de MySQL (sin -dev ni compiladores)
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       default-libmysqlclient-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Instalar wheels pre-compilados: sin red, sin compilador
+COPY --from=builder /wheels /wheels
+RUN pip install --no-cache-dir --no-index --find-links /wheels /wheels/*.whl \
+    && rm -rf /wheels
+
+# El código fuente se monta como volumen en desarrollo
+# (COPY . . sirve si se elimina el volumen en producción)
 COPY . .
 
 EXPOSE 8000
-
-# Arrancar el servidor de desarrollo de Django
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
