@@ -1,8 +1,11 @@
 import './Toast.css'
 
 export default function Toast({ visible, title, desc, onClose }) {
+  // don't render anything when the toast isn't active to avoid a blank fixed box
+  if (!visible) return null
+
   return (
-    <div className={`toast ${visible ? 'active' : ''}`}>
+    <div className={`toast active`}>
       <div className="toast-icon">✓</div>
       <div className="toast-content">
         <span className="toast-title">{title}</span>

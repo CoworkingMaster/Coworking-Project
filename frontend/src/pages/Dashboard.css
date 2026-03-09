@@ -1,0 +1,287 @@
+/* ═══════════════════════════════════
+   Dashboard — WorkHub
+   ═══════════════════════════════════ */
+
+.dashboard-page {
+  min-height: 100vh;
+  background: var(--color-bg-warm);
+  font-family: var(--font-family);
+}
+
+/* ── Header ── */
+.dash-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-navbar);
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dash-header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dash-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.dash-logo-icon {
+  font-size: 20px;
+  color: var(--color-primary);
+}
+
+.dash-logo-text {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.dash-logout-btn {
+  padding: 8px 20px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.dash-logout-btn:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  color: var(--color-text);
+}
+
+.dash-logout-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Main ── */
+.dash-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--space-lg) var(--space-4xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+}
+
+/* ── Hero de bienvenida ── */
+.dash-hero {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.dash-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 26px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 20px rgba(0,113,227,0.3);
+}
+
+.dash-hero-text h1 {
+  font-size: clamp(24px, 4vw, 34px);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+  color: var(--color-text);
+}
+
+.dash-hero-text p {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+}
+
+.dash-plan-badge {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--plan-color) 12%, transparent);
+  color: var(--plan-color);
+  border: 1px solid color-mix(in srgb, var(--plan-color) 25%, transparent);
+}
+
+/* ── Sección ── */
+.dash-section-title {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--color-text);
+  margin-bottom: var(--space-md);
+}
+
+/* ── Card base ── */
+.dash-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-xl);
+}
+
+/* ── Info grid ── */
+.dash-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+.dash-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dash-info-label {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.dash-info-value {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+/* ── Acciones rápidas ── */
+.dash-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-md);
+}
+
+.dash-action-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition-base);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  width: 100%;
+}
+
+.dash-action-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+  border-color: var(--color-border-strong);
+}
+
+.dash-action-icon {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.dash-action-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.dash-action-desc {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+/* ── Plan card ── */
+.dash-plan-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.dash-plan-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.dash-plan-emoji {
+  font-size: 36px;
+}
+
+.dash-plan-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.dash-plan-sub {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.dash-upgrade-btn {
+  padding: 10px 24px;
+  border-radius: var(--radius-full);
+  background: var(--color-text);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-base);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.dash-upgrade-btn:hover {
+  background: #333;
+  transform: translateY(-1px);
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .dash-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dash-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-plan-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dash-upgrade-btn {
+    width: 100%;
+    text-align: center;
+  }
+}

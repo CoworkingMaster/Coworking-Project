@@ -3,6 +3,7 @@ import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { rooms, deskPositions, plantPositions } from '../data/rooms'
+// BookingPanel and reservation logic moved to parent components
 
 /* ─── Room Component ─── */
 function Room({ room, isSelected, onClick }) {
@@ -358,25 +359,32 @@ function Scene({ onRoomSelect, selectedRoomId, viewMode }) {
   )
 }
 
-export default function CoworkingScene({ onRoomSelect, selectedRoomId, viewMode }) {
+export default function CoworkingScene({ viewMode, onRoomSelect, selectedRoomId }) {
+  // CoworkingScene is a dumb 3D viewer; selection and booking are managed by the parent.
   return (
-    <Canvas
-      camera={{ position: [15, 18, 15], fov: 45, near: 0.1, far: 100 }}
-      shadows
-      style={{ width: '100%', height: '100%' }}
-      gl={{
-        antialias: true,
-        toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.2,
-      }}
-      onPointerMissed={() => {}}
-    >
-      <color attach="background" args={['#f5f5f0']} />
-      <Scene
-        onRoomSelect={onRoomSelect}
-        selectedRoomId={selectedRoomId}
-        viewMode={viewMode}
-      />
-    </Canvas>
+    <div style={{ width: "100%", height: "100%", position: "relative" }}>
+
+      <Canvas
+        camera={{ position: [15, 18, 15], fov: 45, near: 0.1, far: 100 }}
+        shadows
+        style={{ width: '100%', height: '100%' }}
+        gl={{
+          antialias: true,
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.2,
+        }}
+      >
+
+        <color attach="background" args={['#f5f5f0']} />
+
+        <Scene
+          onRoomSelect={onRoomSelect}
+          selectedRoomId={selectedRoomId}
+          viewMode={viewMode}
+        />
+
+      </Canvas>
+
+    </div>
   )
 }

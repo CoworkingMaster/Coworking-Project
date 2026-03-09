@@ -1,0 +1,45 @@
+# Excluir de la imagen Docker — reduce el contexto de build y la imagen final
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.python-version
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Entornos virtuales
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# Tests y coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Editores y OS
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Logs
+*.log
+logs/
+
+# Migraciones opcionales (se ejecutan al arrancar el contenedor)
+# Descomenta si prefieres no incluirlas en la imagen
+# */migrations/

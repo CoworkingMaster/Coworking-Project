@@ -91,15 +91,15 @@ WSGI_APPLICATION = 'workhub.wsgi.application'
 # En Docker usa MySQL; en local usa SQLite como fallback
 if os.getenv('DB_HOST'):
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'workhub_db',
-            'USER': 'workhub_user',
-            'PASSWORD': 'workhub_pass123',
-            'HOST': 'db',
-            'PORT': '3306',
-            },
-        }
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": os.getenv("DB_NAME"),
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "HOST": os.getenv("DB_HOST"),
+            "PORT": os.getenv("DB_PORT"),
+            }
+            }
 else:
     DATABASES = {
         'default': {
@@ -166,3 +166,41 @@ CORS_ALLOWED_ORIGINS = os.getenv(
 ).split(',')
 CORS_ALLOW_CREDENTIALS = True
 AUTH_USER_MODEL = "users.User"
+
+# ─── Sesión ───
+# La cookie de sesión dura mientras el navegador esté abierto (o SESSION_COOKIE_AGE segundos)
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7   # 7 días
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = not DEBUG  # True en producción (HTTPS)
+
+# ─── CSRF ───
+# El JS del frontend necesita leer el csrftoken para incluirlo en los headers
+CSRF_COOKIE_HTTPONLY = False   # JS puede leer la cookie csrftoken
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    'CSRF_TRUSTED_ORIGINS',
+    'http://localhost:5173,http://127.0.0.1:5173'
+).split(',')
+
+# ─── Hasher de contraseñas: bcrypt como primera opción ───
+# Instalar: pip install bcrypt
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',  # nuevo
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',        # fallback para passwords ya existentes
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+]
+
+# ─── Gmail API (OAuth2) para envío de correos ───
+# Los valores se leen exclusivamente desde variables de entorno o el archivo .env
+GMAIL_CLIENT_ID = os.getenv('GMAIL_CLIENT_ID')
+GMAIL_CLIENT_SECRET = os.getenv('GMAIL_CLIENT_SECRET')
+GMAIL_REFRESH_TOKEN = os.getenv('GMAIL_REFRESH_TOKEN')
+GMAIL_SENDER = os.getenv('GMAIL_SENDER', 'WorkHub <noreply@workhub.com>')
+
+# ─── Google OAuth Client ID (para verificar access_token del frontend) ───
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+
+# ─── URL base del frontend (para enlaces en emails) ───
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')

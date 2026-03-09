@@ -1,5 +1,7 @@
+import secrets
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
 
 
 ROLE_CHOICES = [
@@ -22,3 +24,23 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class PasswordResetToken(models.Model):
+    """Token de un solo uso para restablecer contraseña (válido 1 hora)."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reset_tokens')
+    token = models.CharField(max_length=64, unique=True, default=secrets.token_urlsafe)
+    created_at = models.DateTimeField(auto_now_add=True)
+    used = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def is_valid(self):
+        if self.used:
+            return False
+        delta = timezone.now() - self.created_at
+        return delta.total_seconds() < 3600  # 1 hora
+
+    def __str__(self):
+        return f"Reset token for {self.user.email}"

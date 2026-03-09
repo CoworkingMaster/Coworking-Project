@@ -1,6 +1,6 @@
 export const rooms = [
   {
-    id: 'sala-1',
+    id: 1,
     name: 'Sala Innovación',
     type: 'Sala Pequeña',
     capacity: '4 personas',
@@ -15,7 +15,7 @@ export const rooms = [
     depth: 3,
   },
   {
-    id: 'sala-2',
+    id: 2,
     name: 'Sala Estrategia',
     type: 'Sala Mediana',
     capacity: '8 personas',
@@ -24,13 +24,13 @@ export const rooms = [
     priceNum: 25,
     rating: '4.9/5',
     amenities: ['📺 Proyector', '📋 Pizarra', '📶 WiFi 6', '☕ Cafetera'],
-    reserved: true,
+    reserved: false,
     position: { x: -6, z: 3 },
     width: 3.5,
     depth: 4,
   },
   {
-    id: 'sala-3',
+    id: 3,
     name: 'Sala Creativa',
     type: 'Sala Mediana',
     capacity: '6 personas',
@@ -45,7 +45,7 @@ export const rooms = [
     depth: 3.5,
   },
   {
-    id: 'sala-4',
+    id: 4,
     name: 'Sala Ejecutiva',
     type: 'Sala Grande',
     capacity: '12 personas',
@@ -60,7 +60,7 @@ export const rooms = [
     depth: 4.5,
   },
   {
-    id: 'sala-5',
+    id: 5,
     name: 'Phone Booth 1',
     type: 'Phone Booth',
     capacity: '1 persona',
@@ -69,13 +69,13 @@ export const rooms = [
     priceNum: 5,
     rating: '4.5/5',
     amenities: ['📶 WiFi 6', '🔌 Enchufes', '🔇 Aislamiento'],
-    reserved: true,
+    reserved: false,
     position: { x: 0, z: -5.5 },
     width: 1.5,
     depth: 1.5,
   },
   {
-    id: 'sala-6',
+    id: 6,
     name: 'Phone Booth 2',
     type: 'Phone Booth',
     capacity: '1 persona',

@@ -1,6 +1,31 @@
 from django.contrib import admin
-from .models import User
+from django.contrib.auth.admin import UserAdmin
+from .models import User, PasswordResetToken
 
 
-admin.site.register(User)
+@admin.register(User)
+class CustomUserAdmin(UserAdmin):
+    list_display = ('email', 'first_name', 'last_name', 'role', 'is_active', 'is_staff', 'date_joined')
+    list_filter = ('role', 'is_active', 'is_staff')
+    search_fields = ('email', 'first_name', 'last_name', 'username')
+    ordering = ('-date_joined',)
 
+    fieldsets = UserAdmin.fieldsets + (
+        ('Información WorkHub', {
+            'fields': ('role', 'phone', 'company', 'vigente_hasta')
+        }),
+    )
+
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        ('Información WorkHub', {
+            'fields': ('email', 'first_name', 'last_name', 'role', 'phone', 'company')
+        }),
+    )
+
+
+@admin.register(PasswordResetToken)
+class PasswordResetTokenAdmin(admin.ModelAdmin):
+    list_display = ('user', 'token', 'created_at', 'used')
+    list_filter = ('used',)
+    search_fields = ('user__email',)
+    readonly_fields = ('token', 'created_at')

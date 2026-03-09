@@ -1,7 +1,9 @@
 .toast {
     position: fixed;
-    bottom: var(--space-xl);
+    /* show at top right instead of bottom */
+    top: var(--space-xl);
     right: var(--space-xl);
+    bottom: auto;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -11,7 +13,7 @@
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-xl);
     z-index: var(--z-toast);
-    transform: translateY(120%);
+    transform: translateY(-120%);
     transition: var(--transition-slow);
 }
 
