@@ -36,10 +36,9 @@ export default function Navbar({ onLoginClick, onRegisterClick }) {
 
   const links = [
     { id: 'hero', label: 'Inicio' },
-    { id: 'features', label: 'Características' },
     { id: 'spaces', label: 'Espacios' },
-    { id: 'room3d', label: 'Vista 3D' },
-    { id: 'pricing', label: 'Planes' },
+    { id: 'services', label: 'Servicios' },
+    { id: 'pricing', label: 'Precios' },
     { id: 'contact', label: 'Contacto' },
   ]
 
@@ -49,7 +48,7 @@ export default function Navbar({ onLoginClick, onRegisterClick }) {
         <div className="nav-container">
           <button className="nav-logo" onClick={() => scrollTo('hero')}>
             <span className="logo-icon">◆</span>
-            <span>WorkHub <span className="logo-3d">3D</span></span>
+            <span>WorkHub</span>
           </button>
 
           <ul className="nav-links">
@@ -67,7 +66,7 @@ export default function Navbar({ onLoginClick, onRegisterClick }) {
 
           <div className="nav-actions">
             <button className="btn-text" onClick={onLoginClick}>Iniciar sesión</button>
-            <button className="btn-primary-sm" onClick={onRegisterClick}>Comenzar gratis</button>
+            <button className="btn-primary-sm" onClick={onRegisterClick}>Registrarse</button>
           </div>
 
           <button

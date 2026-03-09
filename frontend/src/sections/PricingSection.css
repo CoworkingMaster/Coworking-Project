@@ -1,5 +1,22 @@
 .pricing-section {
+    padding: var(--space-3xl) 0;
     background: var(--color-bg-warm);
+}
+
+.pricing-section .section-header {
+    max-width: 720px;
+    margin: 0 auto var(--space-4xl);
+    text-align: center;
+    font-size: 36px;
+    font-weight: 600;
+    margin-bottom: 40px;
+}
+
+.pricing-section .section-subtitle {
+    font-size: 20px;
+    color: var(--color-text-muted);
+    margin-top: 8px;
+    line-height: 1.4;
 }
 
 .pricing-toggle {

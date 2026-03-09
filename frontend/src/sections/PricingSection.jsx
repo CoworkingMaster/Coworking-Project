@@ -4,7 +4,7 @@ import './PricingSection.css'
 
 const plans = [
   {
-    name: 'Estándar',
+    name: 'Standard',
     monthlyPrice: 49,
     features: [
       { text: 'Hot desk compartido', included: true },
@@ -29,7 +29,7 @@ const plans = [
     ],
   },
   {
-    name: 'Ilimitado',
+    name: 'SuperPro',
     monthlyPrice: 199,
     features: [
       { text: 'Oficina privada', included: true },
@@ -55,9 +55,8 @@ export default function PricingSection({ onShowToast }) {
     <section id="pricing" className="section pricing-section" ref={sectionRef}>
       <div className="container">
         <div className="section-header fade-in">
-          <span className="section-label">Precios</span>
-          <h2>Planes flexibles para cada necesidad</h2>
-          <p className="section-subtitle">Sin compromisos, cancela cuando quieras</p>
+          <h2>Planes de membresía</h2>
+          <p className="section-subtitle">Escoge el que mejor se adapte a tu forma de trabajar</p>
         </div>
 
         {/* Toggle */}

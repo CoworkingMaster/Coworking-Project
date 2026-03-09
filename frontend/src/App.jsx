@@ -10,9 +10,7 @@ import ForgotPasswordModal from './components/ForgotPasswordModal'
 import HeroSection from './sections/HeroSection'
 import FeaturesSection from './sections/FeaturesSection'
 import SpacesSection from './sections/SpacesSection'
-import Viewer3DSection from './sections/Viewer3DSection'
 import PricingSection from './sections/PricingSection'
-import TestimonialsSection from './sections/TestimonialsSection'
 import ContactSection from './sections/ContactSection'
 import Dashboard from './pages/Dashboard'
 import ResetPassword from './pages/ResetPassword'
@@ -58,6 +56,8 @@ function LandingPage({ user, onLoginClick, onRegisterClick, onShowToast, loginOp
         <HeroSection />
         <FeaturesSection />
         <SpacesSection />
+        <PricingSection onShowToast={showToast} />
+        <ContactSection onShowToast={showToast} />
         <Viewer3DSection onShowToast={onShowToast} />
         <PricingSection onShowToast={onShowToast} />
         <TestimonialsSection />

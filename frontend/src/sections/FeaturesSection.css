@@ -1,114 +1,101 @@
 .features {
-    padding: var(--space-5xl) 0;
-    background: var(--color-bg-warm);
+  padding: 80px 20px;
+  background: #f2f2f2;
+  text-align: center;
+}
+
+.section-tag {
+  display: inline-block;
+  font-size: 12px;
+  background: #f1f1f1;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  color: #666;
+}
+
+.section-title {
+  font-size: 36px;
+  font-weight: 600;
+  margin-bottom: 40px;
 }
 
 .features-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-md);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 320px);
+  justify-content: center;
+  gap: 24px;
+  max-width: 1040px;
+  margin: auto;
 }
 
 .feature-card {
-    position: relative;
-    padding: var(--space-xl);
-    background: var(--color-surface);
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--color-border);
-    transition: var(--transition-base);
-    cursor: default;
-}
-
-.feature-card:hover {
-    box-shadow: var(--shadow-hover);
-    border-color: var(--color-border-strong);
-    transform: translateY(-2px);
-}
-
-.feature-large {
-    grid-column: span 3;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: var(--space-lg);
-    padding: var(--space-2xl) var(--space-xl);
-    background: linear-gradient(135deg, #1d1d1f 0%, #2d2d30 100%);
-    color: white;
-    border-color: transparent;
-}
-
-.feature-large:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-}
-
-.feature-large h3 {
-    font-size: 22px;
-}
-
-.feature-large p {
-    color: rgba(255,255,255,0.7);
-    max-width: 500px;
-}
-
-.feature-icon-wrapper {
-    margin-bottom: var(--space-md);
-}
-
-.feature-large .feature-icon-wrapper {
-    margin-bottom: 0;
-}
-
-.feature-icon {
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    background: var(--color-bg-warm);
-    border-radius: var(--radius-md);
-}
-
-.feature-large .feature-icon {
-    background: rgba(255,255,255,0.12);
-    font-size: 28px;
-    width: 56px;
-    height: 56px;
+  width: 320px;
+  height: 204px;
+  background: #fff;
+  border-radius: 22px;
+  padding: 18px 18px 16px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: flex-start;
 }
 
 .feature-card h3 {
-    font-size: 17px;
-    font-weight: 600;
-    margin-bottom: var(--space-sm);
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  margin-top: 12px;
+  margin-bottom: 8px;
 }
 
 .feature-card p {
-    font-size: 14px;
-    color: var(--color-text-secondary);
-    line-height: 1.6;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #555;
+  max-width: 260px;
+  margin: 0;
+}
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.08);
 }
 
-.feature-tag {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    padding: 4px 12px;
-    background: var(--color-primary);
-    color: white;
-    border-radius: var(--radius-full);
+.feature-icon {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.03);
+  margin-bottom: 18px;
+  font-size: 28px;
 }
 
-@media (max-width: 768px) {
-    .features-grid {
-        grid-template-columns: 1fr;
-    }
+.feature-card h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
 
-    .feature-large {
-        grid-column: span 1;
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
+.feature-card p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #555;
+  max-width: 260px;
+}
+
+@media (max-width: 900px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
 }
