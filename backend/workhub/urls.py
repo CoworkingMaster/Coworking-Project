@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.http import JsonResponse
 from users.views import (
     register,
@@ -30,6 +30,9 @@ urlpatterns = [
     # Recuperación de contraseña
     path('api/password-reset/', password_reset_request, name='password-reset-request'),
     path('api/password-reset/confirm/', password_reset_confirm, name='password-reset-confirm'),
+
+    #Reserva
+    path('api/reservations/', include('reservations.urls')),
 
     # Google OAuth
     path('api/auth/google/', google_login, name='google-login'),

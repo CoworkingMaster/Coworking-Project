@@ -33,8 +33,10 @@ WORKDIR /app
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
        default-libmysqlclient-dev \
+       build-essential \
+       pkg-config \
+       netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
-
 # Instalar wheels pre-compilados: sin red, sin compilador
 COPY --from=builder /wheels /wheels
 RUN pip install --no-cache-dir --no-index --find-links /wheels /wheels/*.whl \

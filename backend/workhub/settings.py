@@ -91,15 +91,15 @@ WSGI_APPLICATION = 'workhub.wsgi.application'
 # En Docker usa MySQL; en local usa SQLite como fallback
 if os.getenv('DB_HOST'):
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'workhub_db',
-            'USER': 'workhub_user',
-            'PASSWORD': 'workhub_pass123',
-            'HOST': 'db',
-            'PORT': '3306',
-            },
-        }
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": os.getenv("DB_NAME"),
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "HOST": os.getenv("DB_HOST"),
+            "PORT": os.getenv("DB_PORT"),
+            }
+            }
 else:
     DATABASES = {
         'default': {

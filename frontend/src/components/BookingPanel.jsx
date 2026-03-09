@@ -1,10 +1,38 @@
 import { useState, useMemo } from 'react'
 import './BookingPanel.css'
+import { createReservation } from '../utils/api'
+
+
+
+
 
 export default function BookingPanel({ selectedRoom, onClose, onBook }) {
   const [bookingDate, setBookingDate] = useState(() => new Date().toISOString().split('T')[0])
   const [startHour, setStartHour] = useState('10')
   const [endHour, setEndHour] = useState('12')
+
+  const handleBooking = async () => {
+
+  const reservation = {
+    room: selectedRoom.name,
+    date: bookingDate,
+    start_hour: startHour,
+    end_hour: endHour
+  }
+
+  try {
+
+    const result = await createReservation(reservation)
+
+    alert("Reserva creada correctamente")
+
+  } catch (error) {
+
+    console.error(error)
+    alert("Error al crear la reserva")
+
+  }
+}
 
   const hours = useMemo(() => {
     const h = Math.max(parseInt(endHour) - parseInt(startHour), 1)
@@ -129,7 +157,23 @@ export default function BookingPanel({ selectedRoom, onClose, onBook }) {
               className="btn-primary btn-full"
               disabled={selectedRoom.reserved}
               style={{ opacity: selectedRoom.reserved ? 0.5 : 1 }}
-              onClick={() => onBook(selectedRoom.name)}
+              onClick={async () => {
+                const fechaInicio = `${bookingDate}T${startHour}:00:00`
+                const fechaFin = `${bookingDate}T${endHour}:00:00`
+                const reservation = {
+                  espacio: selectedRoom.id,
+                  fecha_inicio: fechaInicio,
+                  fecha_fin: fechaFin,
+                  estado: "activa"
+                }
+                try {
+                  await createReservation(reservation)
+                  alert("Reserva creada correctamente")
+                } catch (error) {
+                  console.error(error)
+                  alert("Error al crear la reserva")
+                }
+              }}
             >
               {selectedRoom.reserved ? 'No disponible' : 'Reservar ahora'}
             </button>

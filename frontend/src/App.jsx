@@ -16,6 +16,7 @@ import TestimonialsSection from './sections/TestimonialsSection'
 import ContactSection from './sections/ContactSection'
 import Dashboard from './pages/Dashboard'
 import ResetPassword from './pages/ResetPassword'
+import Spaces from './pages/Space'
 
 // ── Página principal (landing) ──────────────────────────
 function LandingPage({ user, onLoginClick, onRegisterClick, onShowToast, loginOpen, setLoginOpen, registerOpen, setRegisterOpen, forgotOpen, setForgotOpen, onLoginSuccess }) {
@@ -159,6 +160,10 @@ function App() {
         <Route
           path="/dashboard"
           element={<Dashboard user={user} onLogout={handleLogout} />}
+        />
+        <Route
+        path="/spaces"
+        element={<Spaces />}
         />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>

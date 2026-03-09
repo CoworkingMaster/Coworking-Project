@@ -108,7 +108,15 @@ export default function Dashboard({ user, onLogout }) {
           <h2 className="dash-section-title">Acciones rápidas</h2>
           <div className="dash-actions-grid">
             {QUICK_ACTIONS.map((action) => (
-              <button key={action.title} className="dash-card dash-action-card">
+              <button
+              key={action.title}
+              className="dash-card dash-action-card"
+              onClick={() => {
+                if (action.title === "Reservar espacio") {
+                  navigate("/spaces")
+                }
+                }}
+>
                 <span className="dash-action-icon">{action.icon}</span>
                 <div>
                   <p className="dash-action-title">{action.title}</p>
