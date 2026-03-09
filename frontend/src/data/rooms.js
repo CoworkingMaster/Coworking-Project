@@ -1,6 +1,6 @@
 export const rooms = [
   {
-    id: 5,
+    id: 1,
     name: 'Sala Innovación',
     type: 'Sala Pequeña',
     capacity: '4 personas',
@@ -15,7 +15,7 @@ export const rooms = [
     depth: 3,
   },
   {
-    id: 6,
+    id: 2,
     name: 'Sala Estrategia',
     type: 'Sala Mediana',
     capacity: '8 personas',
@@ -30,7 +30,7 @@ export const rooms = [
     depth: 4,
   },
   {
-    id: 7,
+    id: 3,
     name: 'Sala Creativa',
     type: 'Sala Mediana',
     capacity: '6 personas',
@@ -45,7 +45,7 @@ export const rooms = [
     depth: 3.5,
   },
   {
-    id: 8,
+    id: 4,
     name: 'Sala Ejecutiva',
     type: 'Sala Grande',
     capacity: '12 personas',
@@ -60,7 +60,7 @@ export const rooms = [
     depth: 4.5,
   },
   {
-    id: 9,
+    id: 5,
     name: 'Phone Booth 1',
     type: 'Phone Booth',
     capacity: '1 persona',
@@ -75,7 +75,7 @@ export const rooms = [
     depth: 1.5,
   },
   {
-    id: 10,
+    id: 6,
     name: 'Phone Booth 2',
     type: 'Phone Booth',
     capacity: '1 persona',
