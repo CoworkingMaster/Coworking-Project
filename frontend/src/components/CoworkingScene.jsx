@@ -3,9 +3,7 @@ import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { rooms, deskPositions, plantPositions } from '../data/rooms'
-import BookingPanel from "./BookingPanel"
-import { useState } from "react"
-import { createReservation } from "../utils/api"
+// BookingPanel and reservation logic moved to parent components
 
 /* ─── Room Component ─── */
 function Room({ room, isSelected, onClick }) {
@@ -361,24 +359,8 @@ function Scene({ onRoomSelect, selectedRoomId, viewMode }) {
   )
 }
 
-export default function CoworkingScene({ viewMode }) {
-
-  const [selectedRoom, setSelectedRoom] = useState(null)
-
-  const handleRoomSelect = (room) => {
-    setSelectedRoom(room)
-  }
-
-  const handleBook = async (reservationData) => {
-    try {
-      await createReservation(reservationData)
-      alert("Reserva creada correctamente")
-    } catch (error) {
-      console.error(error)
-      alert("Error al crear reserva")
-    }
-  }
-
+export default function CoworkingScene({ viewMode, onRoomSelect, selectedRoomId }) {
+  // CoworkingScene is a dumb 3D viewer; selection and booking are managed by the parent.
   return (
     <div style={{ width: "100%", height: "100%", position: "relative" }}>
 
@@ -396,18 +378,12 @@ export default function CoworkingScene({ viewMode }) {
         <color attach="background" args={['#f5f5f0']} />
 
         <Scene
-          onRoomSelect={handleRoomSelect}
-          selectedRoomId={selectedRoom?.id}
+          onRoomSelect={onRoomSelect}
+          selectedRoomId={selectedRoomId}
           viewMode={viewMode}
         />
 
       </Canvas>
-
-      <BookingPanel
-        selectedRoom={selectedRoom}
-        onClose={() => setSelectedRoom(null)}
-        onBook={handleBook}
-      />
 
     </div>
   )
