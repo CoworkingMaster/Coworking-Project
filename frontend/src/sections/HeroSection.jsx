@@ -16,25 +16,28 @@ export default function HeroSection() {
       <div className="hero-content">
         <div className="hero-badge">
           <span className="badge-dot" />
-          Nuevo: Reservas en 3D interactivo
+          Espacio de trabajo compartido
         </div>
         <h1 className="hero-title">
-          Tu espacio de trabajo.<br />
-          <span className="hero-gradient-text">Reinventado.</span>
+          Tu espacio.<br />
+          <span className="hero-gradient-text">Tu ritmo.</span>
+          <br />
+          Tu comunidad.<br />
         </h1>
         <p className="hero-subtitle">
-          Explora, visualiza y reserva tu espacio ideal en nuestro coworking 
-          con una experiencia 3D inmersiva. Tan simple como debería ser.
+          Reserva tu puesto o sala en minutos. Coworking
+moderno en el centro, con todo lo que necesitas para
+trabajar en serio.
         </p>
         <div className="hero-ctas">
           <button className="btn-primary" onClick={() => scrollTo('room3d')}>
-            Explorar en 3D
+            Ver espacios disponibles
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
             </svg>
           </button>
           <button className="btn-secondary" onClick={() => scrollTo('features')}>
-            Descubrir más
+            Conocer más
           </button>
         </div>
         <div className="hero-stats">
@@ -50,7 +53,7 @@ export default function HeroSection() {
           <div className="stat-divider" />
           <div className="stat">
             <span className="stat-number">98%</span>
-            <span className="stat-label">Satisfacción</span>
+            <span className="stat-label">Horario de apertura</span>
           </div>
         </div>
       </div>

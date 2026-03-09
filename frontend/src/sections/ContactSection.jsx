@@ -26,46 +26,36 @@ export default function ContactSection({ onShowToast }) {
     <section id="contact" className="section contact-section" ref={sectionRef}>
       <div className="container">
         <div className="section-header">
-          <span className="section-label">Contacto</span>
-          <h2>¿Tienes alguna pregunta?</h2>
-          <p className="section-subtitle">
-            Estamos aquí para ayudarte. Contáctanos y te responderemos lo antes posible
-          </p>
+          <h2>¿Tienes dudas?</h2>
+          <p className="section-subtitle">Escríbenos o pasa a visitarnos.</p>
         </div>
 
-        <div className="contact grid fade-in">
+        <div className="contact-grid grid fade-in">
           {/* Info */}
           <div className="contact-info">
             <div className="contact-info-card">
-              <div className="contact-item">
-                <span className="contact-icon">📍</span>
-                <div>
-                  <span className="contact-item-label">Dirección</span>
-                  <span className="contact-item-value">Calle de la Innovación 42, 28001 Madrid</span>
-                </div>
-              </div>
-              <div className="contact-item">
-                <span className="contact-icon">📧</span>
-                <div>
-                  <span className="contact-item-label">Email</span>
-                  <span className="contact-item-value">hola@workhub3d.com</span>
-                </div>
-              </div>
-              <div className="contact-item">
-                <span className="contact-icon">📞</span>
-                <div>
-                  <span className="contact-item-label">Teléfono</span>
-                  <span className="contact-item-value">+34 912 345 678</span>
-                </div>
-              </div>
-              <div className="contact-item">
-                <span className="contact-icon">🕐</span>
-                <div>
-                  <span className="contact-item-label">Horario</span>
-                  <span className="contact-item-value">Lun - Vie: 8:00 - 20:00</span>
-                </div>
+            <div className="contact-item">
+              <span className="contact-icon" aria-hidden="true">📍</span>
+              <div>
+                <span className="contact-item-label">Dirección</span>
+                <span className="contact-item-value">Calle Ejemplo 12, Madrid</span>
               </div>
             </div>
+            <div className="contact-item">
+              <span className="contact-icon" aria-hidden="true">🕐</span>
+              <div>
+                <span className="contact-item-label">Horario</span>
+                <span className="contact-item-value">Lun–Vie 7:00 – 21:00</span>
+              </div>
+            </div>
+            <div className="contact-item">
+              <span className="contact-icon" aria-hidden="true">📧</span>
+              <div>
+                <span className="contact-item-label">Email</span>
+                <span className="contact-item-value">hola@workhub.es</span>
+              </div>
+            </div>
+          </div>
           </div>
 
           {/* Form */}

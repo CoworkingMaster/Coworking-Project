@@ -7,9 +7,7 @@ import RegisterModal from './components/RegisterModal'
 import HeroSection from './sections/HeroSection'
 import FeaturesSection from './sections/FeaturesSection'
 import SpacesSection from './sections/SpacesSection'
-import Viewer3DSection from './sections/Viewer3DSection'
 import PricingSection from './sections/PricingSection'
-import TestimonialsSection from './sections/TestimonialsSection'
 import ContactSection from './sections/ContactSection'
 
 function App() {
@@ -54,9 +52,7 @@ function App() {
         <HeroSection />
         <FeaturesSection />
         <SpacesSection />
-        <Viewer3DSection onShowToast={showToast} />
         <PricingSection onShowToast={showToast} />
-        <TestimonialsSection />
         <ContactSection onShowToast={showToast} />
       </main>
 
