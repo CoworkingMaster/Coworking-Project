@@ -3,10 +3,34 @@ import { Suspense } from 'react'
 import CoworkingScene from '../components/CoworkingScene'
 import BookingPanel from '../components/BookingPanel'
 import './Viewer3DSection.css'
+import { useEffect } from 'react'
 
 export default function Viewer3DSection({ onShowToast }) {
   const [selectedRoom, setSelectedRoom] = useState(null)
   const [viewMode, setViewMode] = useState('3d')
+  const [occupiedSpaces, setOccupiedSpaces] = useState([])
+  const [bookingStart, setBookingStart] = useState(null)
+  const [bookingEnd, setBookingEnd] = useState(null)
+
+
+const fetchOccupied = (start, end) => {
+
+  if(!start || !end) return
+
+  fetch(`http://localhost:8000/api/reservations/occupied/?fecha_inicio=${start}&fecha_fin=${end}`)
+    .then(res => res.json())
+    .then(data => {
+      setOccupiedSpaces(data?.occupied_spaces || [])
+    })
+
+}
+  useEffect(() => {
+
+  if(!bookingStart || !bookingEnd) return
+
+  fetchOccupied(bookingStart, bookingEnd)
+
+}, [bookingStart, bookingEnd])
 
   const handleRoomSelect = useCallback((room) => {
     setSelectedRoom(room)
@@ -30,7 +54,7 @@ export default function Viewer3DSection({ onShowToast }) {
             <span className="text-muted">En tres dimensiones.</span>
           </h2>
           <p className="section-desc">
-            Navega por nuestro coworking virtual. Haz clic en cualquier sala para ver su disponibilidad y reservar al instante.
+            Navega por nuestro coworking virtual. Haz clic en cualquier sala o puesto para ver su disponibilidad y reservar al instante.
           </p>
         </div>
       </div>
@@ -40,9 +64,10 @@ export default function Viewer3DSection({ onShowToast }) {
           <div className="viewer-canvas">
             <Suspense fallback={<div className="viewer-loading">Cargando escena 3D...</div>}>
               <CoworkingScene
-                onRoomSelect={handleRoomSelect}
-                selectedRoomId={selectedRoom?.id}
-                viewMode={viewMode}
+              onRoomSelect={handleRoomSelect}
+              selectedRoomId={selectedRoom?.id}
+              occupiedSpaces={occupiedSpaces}
+              viewMode={viewMode}
               />
             </Suspense>
           </div>
@@ -94,14 +119,17 @@ export default function Viewer3DSection({ onShowToast }) {
           <div className="viewer-instructions">
             <span>🖱️ Arrastra para rotar</span>
             <span>🔍 Scroll para zoom</span>
-            <span>👆 Clic en sala para seleccionar</span>
+            <span>👆 Clic en sala o puesto para seleccionar</span>
           </div>
         </div>
 
         <BookingPanel
           selectedRoom={selectedRoom}
           onClose={handlePanelClose}
-          onBook={handleBook}
+          setBookingStart={setBookingStart}
+          setBookingEnd={setBookingEnd}
+          occupiedSpaces={occupiedSpaces}
+          fetchOccupied={fetchOccupied}
         />
       </div>
     </section>

@@ -15,6 +15,8 @@ import ContactSection from './sections/ContactSection'
 import Dashboard from './pages/Dashboard'
 import ResetPassword from './pages/ResetPassword'
 import Spaces from './pages/Space'
+import Viewer3DSection from './sections/Viewer3DSection'
+import TestimonialsSection from './sections/TestimonialsSection'
 
 // ── Página principal (landing) ──────────────────────────
 function LandingPage({ user, onLoginClick, onRegisterClick, onShowToast, loginOpen, setLoginOpen, registerOpen, setRegisterOpen, forgotOpen, setForgotOpen, onLoginSuccess }) {
@@ -56,8 +58,8 @@ function LandingPage({ user, onLoginClick, onRegisterClick, onShowToast, loginOp
         <HeroSection />
         <FeaturesSection />
         <SpacesSection />
-        <PricingSection onShowToast={showToast} />
-        <ContactSection onShowToast={showToast} />
+        <PricingSection onShowToast={onShowToast} />
+        <ContactSection onShowToast={onShowToast} />
         <Viewer3DSection onShowToast={onShowToast} />
         <PricingSection onShowToast={onShowToast} />
         <TestimonialsSection />

@@ -1,16 +1,31 @@
 from rest_framework import serializers
 from .models import Reserva
-from spaces.models import Espacio
 
 
 class ReservationSerializer(serializers.ModelSerializer):
 
-    usuario = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    espacio = serializers.PrimaryKeyRelatedField(
-        queryset=Espacio.objects.all()
-    )
-
     class Meta:
         model = Reserva
-        fields = '__all__'
+        fields = "__all__"
+        read_only_fields = ["usuario"]
+
+    def validate(self, data):
+
+        espacio = data["espacio"]
+        inicio = data["fecha_inicio"]
+        fin = data["fecha_fin"]
+
+        reservas = Reserva.objects.filter(
+            espacio=espacio,
+            estado="activa",
+            fecha_inicio__lt=fin,
+            fecha_fin__gt=inicio
+        )
+
+        if reservas.exists():
+            raise serializers.ValidationError(
+                "Este espacio ya está reservado en ese horario."
+            )
+
+        return data
+    
