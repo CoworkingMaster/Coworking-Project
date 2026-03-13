@@ -92,20 +92,176 @@ export const rooms = [
 ]
 
 export const deskPositions = [
-  { x: -2.5, z: -1.5, occupied: true },
-  { x: -1, z: -1.5, occupied: false },
-  { x: 0.5, z: -1.5, occupied: true },
-  { x: 2, z: -1.5, occupied: false },
-  { x: -2.5, z: 0.5, occupied: false },
-  { x: -1, z: 0.5, occupied: true },
-  { x: 0.5, z: 0.5, occupied: false },
-  { x: 2, z: 0.5, occupied: true },
-  { x: -2.5, z: 2.5, occupied: true },
-  { x: -1, z: 2.5, occupied: false },
-  { x: 0.5, z: 2.5, occupied: true },
-  { x: 2, z: 2.5, occupied: false },
-]
 
+  {
+    id: 7,
+    name: "Puesto 1",
+    capacity: "1 persona",
+    size: "4 m²",
+    price: "3€/hora",
+    priceNum: 3,
+    rating: "4.5/5",
+    amenities: ["💻 Monitor", "📶 WiFi 6", "🔌 Enchufes"],
+    x: -2.5,
+    z: -1.5,
+    occupied: false
+  },
+
+  {
+    id: 8,
+    name: "Puesto 2",
+    capacity: "1 persona",
+    size: "4 m²",
+    price: "3€/hora",
+    priceNum: 3,
+    rating: "4.5/5",
+    amenities: ["💻 Monitor", "📶 WiFi 6", "🔌 Enchufes"],
+    x: -1,
+    z: -1.5,
+    occupied: false
+  },
+
+  {
+    id: 9,
+    name: "Puesto 3",
+    capacity: "1 persona",
+    size: "4 m²",
+    price: "3€/hora",
+    priceNum: 3,
+    rating: "4.5/5",
+    amenities: ["💻 Monitor", "📶 WiFi 6", "🔌 Enchufes"],
+    x: 0.5,
+    z: -1.5,
+    occupied: false
+  },
+
+  {
+    id: 10,
+    name: "Puesto 4",
+    capacity: "1 persona",
+    size: "4 m²",
+    price: "3€/hora",
+    priceNum: 3,
+    rating: "4.5/5",
+    amenities: ["💻 Monitor", "📶 WiFi 6", "🔌 Enchufes"],
+    x: 2,
+    z: -1.5,
+    occupied: false
+  },
+
+  {
+    id: 11,
+    name: "Puesto 5",
+    capacity: "1 persona",
+    size: "4 m²",
+    price: "3€/hora",
+    priceNum: 3,
+    rating: "4.5/5",
+    amenities: ["💻 Monitor", "📶 WiFi 6", "🔌 Enchufes"],
+    x: -2.5,
+    z: 0.5,
+    occupied: false
+  },
+
+  {
+    id: 12,
+    name: "Puesto 6",
+    capacity: "1 persona",
+    size: "4 m²",
+    price: "3€/hora",
+    priceNum: 3,
+    rating: "4.5/5",
+    amenities: ["💻 Monitor", "📶 WiFi 6", "🔌 Enchufes"],
+    x: -1,
+    z: 0.5,
+    occupied: false
+  },
+
+  {
+    id: 13,
+    name: "Puesto 7",
+    capacity: "1 persona",
+    size: "4 m²",
+    price: "3€/hora",
+    priceNum: 3,
+    rating: "4.5/5",
+    amenities: ["💻 Monitor", "📶 WiFi 6", "🔌 Enchufes"],
+    x: 0.5,
+    z: 0.5,
+    occupied: false
+  },
+
+  {
+    id: 14,
+    name: "Puesto 8",
+    capacity: "1 persona",
+    size: "4 m²",
+    price: "3€/hora",
+    priceNum: 3,
+    rating: "4.5/5",
+    amenities: ["💻 Monitor", "📶 WiFi 6", "🔌 Enchufes"],
+    x: 2,
+    z: 0.5,
+    occupied: false
+  },
+
+  {
+    id: 15,
+    name: "Puesto 9",
+    capacity: "1 persona",
+    size: "4 m²",
+    price: "3€/hora",
+    priceNum: 3,
+    rating: "4.5/5",
+    amenities: ["💻 Monitor", "📶 WiFi 6", "🔌 Enchufes"],
+    x: -2.5,
+    z: 2.5,
+    occupied: false
+  },
+
+  {
+    id: 16,
+    name: "Puesto 10",
+    capacity: "1 persona",
+    size: "4 m²",
+    price: "3€/hora",
+    priceNum: 3,
+    rating: "4.5/5",
+    amenities: ["💻 Monitor", "📶 WiFi 6", "🔌 Enchufes"],
+    x: -1,
+    z: 2.5,
+    occupied: false
+  },
+
+  {
+    id: 17,
+    name: "Puesto 11",
+    capacity: "1 persona",
+    size: "4 m²",
+    price: "3€/hora",
+    priceNum: 3,
+    rating: "4.5/5",
+    amenities: ["💻 Monitor", "📶 WiFi 6", "🔌 Enchufes"],
+    x: 0.5,
+    z: 2.5,
+    occupied: false
+  },
+
+  {
+    id: 18,
+    name: "Puesto 12",
+    capacity: "1 persona",
+    size: "4 m²",
+    price: "3€/hora",
+    priceNum: 3,
+    rating: "4.5/5",
+    amenities: ["💻 Monitor", "📶 WiFi 6", "🔌 Enchufes"],
+    x: 2,
+    z: 2.5,
+    occupied: false
+  }
+
+]
 export const plantPositions = [
   { x: -3.5, z: -5.5 },
   { x: 4.5, z: -5.5 },
