@@ -10,7 +10,8 @@ export default function BookingPanel({
   occupiedSpaces,
   fetchOccupied,
   bookingStart,
-  bookingEnd
+  bookingEnd,
+  onShowToast,
 }) {
 
   const [bookingDate, setBookingDate] = useState(
@@ -44,12 +45,12 @@ export default function BookingPanel({
       /* refresco inmediato del mapa */
       fetchOccupied(bookingStart, bookingEnd)
 
-      alert("Reserva creada correctamente")
+      onShowToast?.('Reserva confirmada', `${selectedRoom.name} reservada correctamente.`, 'success')
 
     } catch (error) {
 
       console.error(error)
-      alert("Error al crear la reserva")
+      onShowToast?.('Error al reservar', 'No se pudo completar la reserva. Inténtalo de nuevo.', 'error')
 
     } finally {
 

@@ -58,8 +58,6 @@ function LandingPage({ user, onLoginClick, onRegisterClick, onShowToast, loginOp
         <HeroSection />
         <FeaturesSection />
         <SpacesSection />
-        <PricingSection onShowToast={onShowToast} />
-        <ContactSection onShowToast={onShowToast} />
         <Viewer3DSection onShowToast={onShowToast} />
         <PricingSection onShowToast={onShowToast} />
         <TestimonialsSection />
@@ -100,10 +98,10 @@ function App() {
   const [loginOpen, setLoginOpen] = useState(false)
   const [registerOpen, setRegisterOpen] = useState(false)
   const [forgotOpen, setForgotOpen] = useState(false)
-  const [toast, setToast] = useState({ visible: false, title: '', desc: '' })
+  const [toast, setToast] = useState({ visible: false, title: '', desc: '', type: 'success' })
 
-  const showToast = useCallback((title, desc) => {
-    setToast({ visible: true, title, desc })
+  const showToast = useCallback((title, desc, type = 'success') => {
+    setToast({ visible: true, title, desc, type })
     setTimeout(() => setToast(t => ({ ...t, visible: false })), 4000)
   }, [])
 
@@ -174,6 +172,7 @@ function App() {
         visible={toast.visible}
         title={toast.title}
         desc={toast.desc}
+        type={toast.type}
         onClose={() => setToast(t => ({ ...t, visible: false }))}
       />
     </>

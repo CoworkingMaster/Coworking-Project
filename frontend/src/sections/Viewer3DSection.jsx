@@ -131,6 +131,7 @@ const fetchOccupied = (start, end) => {
           setBookingEnd={setBookingEnd}
           occupiedSpaces={occupiedSpaces}
           fetchOccupied={fetchOccupied}
+          onShowToast={onShowToast}
         />
       </div>
     </section>
