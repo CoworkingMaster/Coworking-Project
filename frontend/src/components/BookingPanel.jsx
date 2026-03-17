@@ -105,10 +105,15 @@ export default function BookingPanel({
       {!selectedRoom ? (
 
         <div className="panel-empty">
-          <div className="panel-empty-icon">◈</div>
+          <div className="panel-empty-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/>
+              <rect x="9" y="13" width="6" height="8"/>
+            </svg>
+          </div>
           <p>
-            Haz clic en cualquier sala o puesto del modelo 3D
-            para ver sus detalles y disponibilidad
+            Selecciona una sala o puesto en el mapa
+            para ver disponibilidad y reservar
           </p>
         </div>
 
@@ -131,7 +136,9 @@ export default function BookingPanel({
           <div className="panel-info-grid">
 
             <div className="panel-info-item">
-              <span className="info-icon">👥</span>
+              <span className="info-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </span>
               <div>
                 <span className="info-label">Capacidad</span>
                 <span className="info-value">{selectedRoom.capacity}</span>
@@ -139,7 +146,9 @@ export default function BookingPanel({
             </div>
 
             <div className="panel-info-item">
-              <span className="info-icon">📏</span>
+              <span className="info-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 3H3v7h18V3ZM21 14H3v7h18v-7Z"/></svg>
+              </span>
               <div>
                 <span className="info-label">Tamaño</span>
                 <span className="info-value">{selectedRoom.size}</span>
@@ -147,7 +156,9 @@ export default function BookingPanel({
             </div>
 
             <div className="panel-info-item">
-              <span className="info-icon">💰</span>
+              <span className="info-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </span>
               <div>
                 <span className="info-label">Precio</span>
                 <span className="info-value">{selectedRoom.price}</span>
@@ -155,7 +166,9 @@ export default function BookingPanel({
             </div>
 
             <div className="panel-info-item">
-              <span className="info-icon">⭐</span>
+              <span className="info-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </span>
               <div>
                 <span className="info-label">Valoración</span>
                 <span className="info-value">{selectedRoom.rating}</span>

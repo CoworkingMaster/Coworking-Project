@@ -48,13 +48,10 @@ const fetchOccupied = (start, end) => {
     <section className="room3d-section" id="room3d">
       <div className="container">
         <div className="section-header">
-          <span className="section-tag">Experiencia 3D</span>
-          <h2 className="section-title">
-            Explora antes de reservar.<br />
-            <span className="text-muted">En tres dimensiones.</span>
-          </h2>
+          <span className="section-tag">Visor 3D</span>
+          <h2 className="section-title">Explora y reserva tu espacio</h2>
           <p className="section-desc">
-            Navega por nuestro coworking virtual. Haz clic en cualquier sala o puesto para ver su disponibilidad y reservar al instante.
+            Haz clic en cualquier sala o puesto para ver disponibilidad y reservar al instante.
           </p>
         </div>
       </div>
@@ -101,25 +98,25 @@ const fetchOccupied = (start, end) => {
 
           {/* Legend */}
           <div className="viewer-legend">
-            <div className="legend-item">
-              <span className="legend-dot green" />
-              Disponible
-            </div>
-            <div className="legend-item">
-              <span className="legend-dot red" />
-              Reservada
-            </div>
-            <div className="legend-item">
-              <span className="legend-dot yellow" />
-              Seleccionada
-            </div>
+            <div className="legend-item"><span className="legend-dot green" />Libre</div>
+            <div className="legend-item"><span className="legend-dot red" />Ocupada</div>
+            <div className="legend-item"><span className="legend-dot yellow" />Seleccionada</div>
           </div>
 
           {/* Instructions */}
           <div className="viewer-instructions">
-            <span>🖱️ Arrastra para rotar</span>
-            <span>🔍 Scroll para zoom</span>
-            <span>👆 Clic en sala o puesto para seleccionar</span>
+            <span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>
+              Arrastra para rotar
+            </span>
+            <span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Scroll para zoom
+            </span>
+            <span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8a6 6 0 0 0 6 6h2a5 5 0 0 0 5-5v-5a2 2 0 0 0-2-2 2 2 0 0 0-2 2"/></svg>
+              Clic para seleccionar
+            </span>
           </div>
         </div>
 

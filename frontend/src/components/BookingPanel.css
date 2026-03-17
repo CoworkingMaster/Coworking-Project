@@ -53,9 +53,15 @@
 }
 
 .panel-empty-icon {
-    font-size: 48px;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-hover);
     margin-bottom: var(--space-md);
-    color: var(--color-border-strong);
+    color: var(--color-text-muted);
 }
 
 .panel-empty p {
@@ -106,9 +112,16 @@
 }
 
 .info-icon {
-    font-size: 18px;
-    line-height: 1;
-    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-warm);
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+    margin-top: 0;
 }
 
 .info-label {
