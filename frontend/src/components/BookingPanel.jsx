@@ -6,6 +6,21 @@ import { createReservation, apiFetch } from "../utils/api"
 const BOOKING_HOURS = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
 const WEEK_DAYS = ['L', 'M', 'X', 'J', 'V', 'S', 'D']
 
+/**
+ * Construye un string ISO con el offset local del navegador.
+ * Ej.: "2026-03-17T18:00+01:00"
+ */
+function localDateTimeStr(date, hour, minute = 0) {
+  const d = new Date(date)
+  d.setHours(hour, minute, 0, 0)
+  const off = -d.getTimezoneOffset()
+  const sign = off >= 0 ? '+' : '-'
+  const hh = String(Math.floor(Math.abs(off) / 60)).padStart(2, '0')
+  const mm = String(Math.abs(off) % 60).padStart(2, '0')
+  const pad = n => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(hour)}:${pad(minute)}${sign}${hh}:${mm}`
+}
+
 const isSameDay = (a, b) =>
   a.getFullYear() === b.getFullYear() &&
   a.getMonth() === b.getMonth() &&
@@ -49,10 +64,11 @@ export default function BookingPanel({
   const fetchDayReservations = useCallback(async () => {
     if (!selectedRoom) return
     setLoadingSlots(true)
-    const dateStr = selectedDate.toISOString().split('T')[0]
     try {
+      const dayStart = localDateTimeStr(selectedDate, 0, 0)
+      const dayEnd   = localDateTimeStr(selectedDate, 23, 59)
       const data = await apiFetch(
-        `/api/reservations/occupied/?fecha_inicio=${dateStr}T00:00&fecha_fin=${dateStr}T23:59`
+        `/api/reservations/occupied/?fecha_inicio=${encodeURIComponent(dayStart)}&fecha_fin=${encodeURIComponent(dayEnd)}`
       )
       const roomRes = (data.reservations || []).filter(
         r => Number(r.espacio) === Number(selectedRoom.id)
@@ -116,10 +132,9 @@ export default function BookingPanel({
   /* ── Sincronizar con el estado padre ── */
   useEffect(() => {
     if (slotStart === null) return
-    const dateStr = selectedDate.toISOString().split('T')[0]
-    const endH    = slotEnd !== null ? slotEnd + 1 : slotStart + 1
-    setBookingStart(`${dateStr}T${String(slotStart).padStart(2, '0')}:00`)
-    setBookingEnd  (`${dateStr}T${String(endH      ).padStart(2, '0')}:00`)
+    const endH = slotEnd !== null ? slotEnd + 1 : slotStart + 1
+    setBookingStart(localDateTimeStr(selectedDate, slotStart))
+    setBookingEnd  (localDateTimeStr(selectedDate, endH))
   }, [slotStart, slotEnd, selectedDate])
 
   /* ── Calendario: días del mes ── */
