@@ -98,7 +98,7 @@ export default function PricingSection({ onShowToast }) {
               </ul>
               <button
                 className={plan.featured ? 'btn-primary btn-full' : 'btn-secondary btn-full'}
-                onClick={() => onShowToast(`Plan ${plan.name} seleccionado`)}
+                onClick={() => onShowToast?.('Plan seleccionado', `Has seleccionado el plan ${plan.name}. Contáctanos para activarlo.`, 'success')}
               >
                 Empezar ahora
               </button>

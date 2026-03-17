@@ -163,7 +163,7 @@ function App() {
         />
         <Route
         path="/spaces"
-        element={<Spaces />}
+        element={<Spaces onShowToast={showToast} />}
         />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>

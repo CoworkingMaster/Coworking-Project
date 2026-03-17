@@ -10,10 +10,10 @@ const PLAN_LABELS = {
 }
 
 const QUICK_ACTIONS = [
-  { icon: '📅', title: 'Reservar espacio', desc: 'Encuentra y reserva tu sala o escritorio' },
-  { icon: '🗓️', title: 'Mis reservas', desc: 'Consulta y gestiona tus reservas activas' },
-  { icon: '👤', title: 'Mi perfil', desc: 'Actualiza tus datos personales y plan' },
-  { icon: '📊', title: 'Estadísticas', desc: 'Revisa tu actividad en WorkHub' },
+  { icon: '📅', title: 'Reservar espacio', desc: 'Encuentra y reserva tu sala o escritorio', link: '/spaces' },
+  { icon: '🗓️', title: 'Mis reservas', desc: 'Consulta y gestiona tus reservas activas', link: null },
+  { icon: '👤', title: 'Mi perfil', desc: 'Actualiza tus datos personales y plan', link: null },
+  { icon: '📊', title: 'Estadísticas', desc: 'Revisa tu actividad en WorkHub', link: null },
 ]
 
 export default function Dashboard({ user, onLogout }) {
@@ -109,18 +109,15 @@ export default function Dashboard({ user, onLogout }) {
           <div className="dash-actions-grid">
             {QUICK_ACTIONS.map((action) => (
               <button
-              key={action.title}
-              className="dash-card dash-action-card"
-              onClick={() => {
-                if (action.title === "Reservar espacio") {
-                  navigate("/spaces")
-                }
-                }}
->
+                key={action.title}
+                className={`dash-card dash-action-card${action.link ? '' : ' dash-action-disabled'}`}
+                onClick={() => action.link && navigate(action.link)}
+                title={action.link ? undefined : 'Próximamente disponible'}
+              >
                 <span className="dash-action-icon">{action.icon}</span>
                 <div>
                   <p className="dash-action-title">{action.title}</p>
-                  <p className="dash-action-desc">{action.desc}</p>
+                  <p className="dash-action-desc">{action.link ? action.desc : 'Próximamente'}</p>
                 </div>
               </button>
             ))}

@@ -18,7 +18,8 @@ export default function ContactSection({ onShowToast }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    onShowToast('¡Mensaje enviado correctamente! Te responderemos en breve.')
+    if (!form.name || !form.email || !form.message) return
+    onShowToast('Mensaje enviado', 'Te responderemos lo antes posible.', 'success')
     setForm({ name: '', email: '', subject: '', message: '' })
   }
 
