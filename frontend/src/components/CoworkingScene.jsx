@@ -391,18 +391,24 @@ function CameraController({ viewMode }) {
   const { camera } = useThree()
   const controlsRef = useRef()
   const targetPos = useRef(new THREE.Vector3(15, 18, 15))
+  const animating = useRef(false)
 
   useEffect(() => {
     targetPos.current = viewMode === "top"
       ? new THREE.Vector3(0, 28, 0.01)
       : new THREE.Vector3(15, 18, 15)
+    animating.current = true
   }, [viewMode])
 
   useFrame(() => {
-    camera.position.lerp(targetPos.current, 0.04)
+    if (!animating.current) return
+    camera.position.lerp(targetPos.current, 0.06)
     if (controlsRef.current) {
-      controlsRef.current.target.lerp(new THREE.Vector3(0, 0, 0), 0.04)
+      controlsRef.current.target.lerp(new THREE.Vector3(0, 0, 0), 0.06)
       controlsRef.current.update()
+    }
+    if (camera.position.distanceTo(targetPos.current) < 0.05) {
+      animating.current = false
     }
   })
 
@@ -410,10 +416,24 @@ function CameraController({ viewMode }) {
     <OrbitControls
       ref={controlsRef}
       enableDamping
-      dampingFactor={0.08}
-      maxPolarAngle={Math.PI / 2.2}
-      minDistance={8}
-      maxDistance={35}
+      dampingFactor={0.1}
+      /* zoom */
+      enableZoom
+      zoomSpeed={1.2}
+      minDistance={5}
+      maxDistance={50}
+      /* pan con click derecho o dos dedos */
+      enablePan
+      panSpeed={1.0}
+      screenSpacePanning={false}
+      keyPanSpeed={12}
+      /* rotación */
+      enableRotate
+      rotateSpeed={0.6}
+      maxPolarAngle={Math.PI / 2.05}
+      /* límites de encuadre */
+      minAzimuthAngle={-Infinity}
+      maxAzimuthAngle={Infinity}
     />
   )
 }
