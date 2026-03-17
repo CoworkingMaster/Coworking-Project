@@ -22,7 +22,7 @@ function HangingLamp({ x, z, color = "#fff8e7" }) {
         <sphereGeometry args={[0.1, 12, 12]} />
         <meshStandardMaterial color={color} emissive={color} emissiveIntensity={2} toneMapped={false} />
       </mesh>
-      <pointLight position={[0, -0.5, 0]} intensity={3} distance={6} color={color} castShadow shadow-mapSize={512} />
+      <pointLight position={[0, -0.5, 0]} intensity={3} distance={6} color={color} />
     </group>
   )
 }
@@ -150,7 +150,6 @@ function Room({ room, isSelected, onClick, occupied, mine, reservation, count })
     opacity: isSelected ? 0.28 : 0.12,
     roughness: 0.05,
     metalness: 0.1,
-    envMapIntensity: 1.5,
   }), [color, isSelected])
 
   return (
@@ -189,7 +188,6 @@ function Room({ room, isSelected, onClick, occupied, mine, reservation, count })
             transmission={0.6}
             thickness={0.5}
             ior={1.5}
-            envMapIntensity={2}
           />
         </mesh>
       ))}
