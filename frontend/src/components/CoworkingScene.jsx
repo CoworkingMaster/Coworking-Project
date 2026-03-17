@@ -457,45 +457,13 @@ function Scene({
       <directionalLight position={[-8, 10, -8]} intensity={0.3} />
 
       {/* ─── ENVIRONMENT ─── */}
-      <Environment preset="city" environmentIntensity={0.4} />
-      <fog attach="fog" args={["#e8e4de", 25, 55]} />
+      <Environment preset="apartment" background={false} environmentIntensity={0.3} />
 
       {/* ─── MAIN FLOOR ─── */}
       <mesh position={[0, -0.05, 0]} receiveShadow>
-        <boxGeometry args={[24, 0.1, 18]} />
+        <boxGeometry args={[60, 0.1, 60]} />
         <meshStandardMaterial color="#d9d0c4" roughness={0.75} metalness={0.02} />
       </mesh>
-
-      {/* FLOOR PATTERN – subtle tiles */}
-      {Array.from({ length: 12 }, (_, ix) =>
-        Array.from({ length: 9 }, (_, iz) => {
-          const px = -11 + ix * 2
-          const pz = -8 + iz * 2
-          return (
-            <mesh key={`tile-${ix}-${iz}`} position={[px, 0.01, pz]} receiveShadow>
-              <planeGeometry args={[1.92, 1.92]} />
-              <meshStandardMaterial
-                color={(ix + iz) % 2 === 0 ? "#e2dbd0" : "#ded5c8"}
-                roughness={0.65}
-                metalness={0.02}
-              />
-            </mesh>
-          )
-        })
-      ).flat()}
-
-      {/* OUTER BORDER / BASEBOARD */}
-      {[
-        { pos: [0, 0.15, -9], args: [24.2, 0.3, 0.1] },
-        { pos: [0, 0.15, 9], args: [24.2, 0.3, 0.1] },
-        { pos: [-12.05, 0.15, 0], args: [0.1, 0.3, 18.2] },
-        { pos: [12.05, 0.15, 0], args: [0.1, 0.3, 18.2] },
-      ].map(({ pos, args }, i) => (
-        <mesh key={`base-${i}`} position={pos} castShadow>
-          <boxGeometry args={args} />
-          <meshStandardMaterial color="#bbb0a0" roughness={0.5} metalness={0.1} />
-        </mesh>
-      ))}
 
       {/* ─── ROOMS ─── */}
       {rooms.map(room => (
@@ -571,7 +539,7 @@ export default function CoworkingScene({
           toneMappingExposure: 1.1,
         }}
       >
-        <color attach="background" args={["#eae5dc"]} />
+        <color attach="background" args={["#d9d0c4"]} />
 
         <Scene
           onRoomSelect={onRoomSelect}
