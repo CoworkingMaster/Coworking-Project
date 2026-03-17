@@ -36,8 +36,6 @@ export async function apiFetch(path, options = {}) {
 
 export const createReservation = async (reservation) => {
 
-  console.log("reservation enviada:", reservation)
-
   const res = await apiFetch('/api/reservations/', {
     method: 'POST',
     body: JSON.stringify(reservation)

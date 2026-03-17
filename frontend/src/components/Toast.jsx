@@ -1,8 +1,6 @@
 import './Toast.css'
 
 export default function Toast({ visible, title, desc, type = 'success', onClose }) {
-  if (!visible) return null
-
   const icons = {
     success: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
@@ -18,7 +16,7 @@ export default function Toast({ visible, title, desc, type = 'success', onClose 
   }
 
   return (
-    <div className={`toast toast--${type} active`}>
+    <div className={`toast toast--${type}${visible ? ' active' : ''}`}>
       <div className="toast-icon">{icons[type] ?? icons.success}</div>
       <div className="toast-content">
         <span className="toast-title">{title}</span>

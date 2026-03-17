@@ -1,9 +1,10 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback } from 'react'
 import { Suspense } from 'react'
 import CoworkingScene from '../components/CoworkingScene'
 import BookingPanel from '../components/BookingPanel'
 import './Viewer3DSection.css'
 import { useEffect } from 'react'
+import { apiFetch } from '../utils/api'
 
 export default function Viewer3DSection({ onShowToast }) {
   const [selectedRoom, setSelectedRoom] = useState(null)
@@ -17,11 +18,12 @@ const fetchOccupied = (start, end) => {
 
   if(!start || !end) return
 
-  fetch(`http://localhost:8000/api/reservations/occupied/?fecha_inicio=${start}&fecha_fin=${end}`)
+  apiFetch(`/api/reservations/occupied/?fecha_inicio=${start}&fecha_fin=${end}`)
     .then(res => res.json())
     .then(data => {
       setOccupiedSpaces(data?.occupied_spaces || [])
     })
+    .catch(() => {})
 
 }
   useEffect(() => {
@@ -39,10 +41,6 @@ const fetchOccupied = (start, end) => {
   const handlePanelClose = useCallback(() => {
     setSelectedRoom(null)
   }, [])
-
-  const handleBook = useCallback((roomName) => {
-    onShowToast('¡Reserva confirmada!', `${roomName} ha sido reservada con éxito.`)
-  }, [onShowToast])
 
   return (
     <section className="room3d-section" id="room3d">
@@ -129,6 +127,8 @@ const fetchOccupied = (start, end) => {
           onClose={handlePanelClose}
           setBookingStart={setBookingStart}
           setBookingEnd={setBookingEnd}
+          bookingStart={bookingStart}
+          bookingEnd={bookingEnd}
           occupiedSpaces={occupiedSpaces}
           fetchOccupied={fetchOccupied}
           onShowToast={onShowToast}
