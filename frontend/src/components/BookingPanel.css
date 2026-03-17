@@ -372,9 +372,9 @@
 
 /* Ocupado */
 .slot--occupied {
-    background: rgba(255, 59, 48, 0.06);
-    border-color: rgba(255, 59, 48, 0.2);
-    color: rgba(200, 60, 48, 0.45);
+    background: rgba(255, 59, 48, 0.15);
+    border-color: rgba(255, 59, 48, 0.55);
+    color: #c0392b;
     cursor: not-allowed;
     position: relative;
 }
@@ -390,7 +390,7 @@
     right: 0;
     top: 50%;
     height: 1.5px;
-    background: rgba(255, 59, 48, 0.35);
+    background: rgba(255, 59, 48, 0.7);
     border-radius: 2px;
     transform: translateY(-50%);
 }

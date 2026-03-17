@@ -67,9 +67,10 @@ export default function BookingPanel({
     try {
       const dayStart = localDateTimeStr(selectedDate, 0, 0)
       const dayEnd   = localDateTimeStr(selectedDate, 23, 59)
-      const data = await apiFetch(
+      const res = await apiFetch(
         `/api/reservations/occupied/?fecha_inicio=${encodeURIComponent(dayStart)}&fecha_fin=${encodeURIComponent(dayEnd)}`
       )
+      const data = await res.json()
       const roomRes = (data.reservations || []).filter(
         r => Number(r.espacio) === Number(selectedRoom.id)
       )
