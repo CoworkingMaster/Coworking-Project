@@ -13,10 +13,10 @@ import SpacesSection from './sections/SpacesSection'
 import PricingSection from './sections/PricingSection'
 import ContactSection from './sections/ContactSection'
 import Dashboard from './pages/Dashboard'
+import Reservations from './pages/Reservations'
 import ResetPassword from './pages/ResetPassword'
 import Spaces from './pages/Space'
 import Viewer3DSection from './sections/Viewer3DSection'
-import TestimonialsSection from './sections/TestimonialsSection'
 
 // ── Página principal (landing) ──────────────────────────
 function LandingPage({ user, onLoginClick, onRegisterClick, onShowToast, loginOpen, setLoginOpen, registerOpen, setRegisterOpen, forgotOpen, setForgotOpen, onLoginSuccess }) {
@@ -58,11 +58,8 @@ function LandingPage({ user, onLoginClick, onRegisterClick, onShowToast, loginOp
         <HeroSection />
         <FeaturesSection />
         <SpacesSection />
-        <PricingSection onShowToast={onShowToast} />
-        <ContactSection onShowToast={onShowToast} />
         <Viewer3DSection onShowToast={onShowToast} />
         <PricingSection onShowToast={onShowToast} />
-        <TestimonialsSection />
         <ContactSection onShowToast={onShowToast} />
       </main>
       <Footer />
@@ -168,6 +165,10 @@ function App() {
         element={<Spaces />}
         />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route
+          path="/reservations"
+          element={<Reservations user={user} onLogout={handleLogout} />}
+        />
       </Routes>
 
       <Toast
