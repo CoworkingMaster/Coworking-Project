@@ -1,20 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apiFetch } from '../utils/api'
+import { PLAN_LABELS, QUICK_ACTIONS } from '../data/dashboardLabels'
 import './Dashboard.css'
-
-const PLAN_LABELS = {
-  standard: { label: 'Standard', color: '#0071e3', emoji: '🌱' },
-  premium: { label: 'Premium', color: '#9b59b6', emoji: '⭐' },
-  enterprise: { label: 'Enterprise', color: '#e67e22', emoji: '🚀' },
-}
-
-const QUICK_ACTIONS = [
-  { icon: '📅', title: 'Reservar espacio', desc: 'Encuentra y reserva tu sala o escritorio' },
-  { icon: '🗓️', title: 'Mis reservas', desc: 'Consulta y gestiona tus reservas activas' },
-  { icon: '👤', title: 'Mi perfil', desc: 'Actualiza tus datos personales y plan' },
-  { icon: '📊', title: 'Estadísticas', desc: 'Revisa tu actividad en WorkHub' },
-]
 
 export default function Dashboard({ user, onLogout }) {
   const navigate = useNavigate()
@@ -109,14 +97,17 @@ export default function Dashboard({ user, onLogout }) {
           <div className="dash-actions-grid">
             {QUICK_ACTIONS.map((action) => (
               <button
-              key={action.title}
-              className="dash-card dash-action-card"
-              onClick={() => {
-                if (action.title === "Reservar espacio") {
-                  navigate("/spaces")
-                }
+                key={action.title}
+                className="dash-card dash-action-card"
+                onClick={() => {
+                  if (action.title === 'Reservar espacio') {
+                    navigate('/spaces')
+                  }
+                  if (action.title === 'Mis reservas') {
+                    navigate('/reservations')
+                  }
                 }}
->
+              >
                 <span className="dash-action-icon">{action.icon}</span>
                 <div>
                   <p className="dash-action-title">{action.title}</p>
