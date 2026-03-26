@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apiFetch } from '../utils/api'
+import { PLAN_LABELS, QUICK_ACTIONS } from '../data/dashboardLabels'
 import './Dashboard.css'
 
 const PLAN_LABELS = {
