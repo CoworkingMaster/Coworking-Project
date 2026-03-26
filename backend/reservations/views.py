@@ -4,6 +4,7 @@ from .serializers import ReservationSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.utils.dateparse import parse_datetime
+from django.utils import timezone
 
 
 class ReservationViewSet(viewsets.ModelViewSet):
@@ -14,12 +15,18 @@ class ReservationViewSet(viewsets.ModelViewSet):
         serializer.save(usuario=self.request.user)
 
 
+def make_aware_safe(dt):
+    """Convierte un datetime naive a aware usando la zona horaria configurada."""
+    if dt is None:
+        return None
+    if timezone.is_aware(dt):
+        return dt
+    return timezone.make_aware(dt)
+
+
 @api_view(["GET"])
 def occupied_spaces(request):
 
-    print("USER:", request.user)
-    print("AUTH:", request.user.is_authenticated)
-    
     fecha_inicio = request.GET.get("fecha_inicio")
     fecha_fin = request.GET.get("fecha_fin")
 
@@ -30,8 +37,15 @@ def occupied_spaces(request):
             "reservations": []
         })
 
-    inicio = parse_datetime(fecha_inicio)
-    fin = parse_datetime(fecha_fin)
+    inicio = make_aware_safe(parse_datetime(fecha_inicio))
+    fin    = make_aware_safe(parse_datetime(fecha_fin))
+
+    if inicio is None or fin is None:
+        return Response({
+            "occupied_spaces": [],
+            "my_reservations": [],
+            "reservations": []
+        })
 
     reservas = Reserva.objects.filter(
         estado="activa",

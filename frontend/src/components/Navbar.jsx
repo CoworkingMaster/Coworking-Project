@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './Navbar.css'
 
-export default function Navbar({ onLoginClick, onRegisterClick }) {
+export default function Navbar({ onLoginClick, onRegisterClick, user }) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('hero')
@@ -65,8 +65,14 @@ export default function Navbar({ onLoginClick, onRegisterClick }) {
           </ul>
 
           <div className="nav-actions">
-            <button className="btn-text" onClick={onLoginClick}>Iniciar sesión</button>
-            <button className="btn-primary-sm" onClick={onRegisterClick}>Registrarse</button>
+            {user ? (
+              <a href="/dashboard" className="btn-primary-sm">Mi cuenta</a>
+            ) : (
+              <>
+                <button className="btn-text" onClick={onLoginClick}>Iniciar sesión</button>
+                <button className="btn-primary-sm" onClick={onRegisterClick}>Registrarse</button>
+              </>
+            )}
           </div>
 
           <button

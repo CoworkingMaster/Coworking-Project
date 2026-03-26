@@ -1,9 +1,10 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback } from 'react'
 import { Suspense } from 'react'
 import CoworkingScene from '../components/CoworkingScene'
 import BookingPanel from '../components/BookingPanel'
 import './Viewer3DSection.css'
 import { useEffect } from 'react'
+import { apiFetch } from '../utils/api'
 
 export default function Viewer3DSection({ onShowToast }) {
   const [selectedRoom, setSelectedRoom] = useState(null)
@@ -17,11 +18,12 @@ const fetchOccupied = (start, end) => {
 
   if(!start || !end) return
 
-  fetch(`http://localhost:8000/api/reservations/occupied/?fecha_inicio=${start}&fecha_fin=${end}`)
+  apiFetch(`/api/reservations/occupied/?fecha_inicio=${start}&fecha_fin=${end}`)
     .then(res => res.json())
     .then(data => {
       setOccupiedSpaces(data?.occupied_spaces || [])
     })
+    .catch(() => {})
 
 }
   useEffect(() => {
@@ -40,21 +42,14 @@ const fetchOccupied = (start, end) => {
     setSelectedRoom(null)
   }, [])
 
-  const handleBook = useCallback((roomName) => {
-    onShowToast('¡Reserva confirmada!', `${roomName} ha sido reservada con éxito.`)
-  }, [onShowToast])
-
   return (
     <section className="room3d-section" id="room3d">
       <div className="container">
         <div className="section-header">
-          <span className="section-tag">Experiencia 3D</span>
-          <h2 className="section-title">
-            Explora antes de reservar.<br />
-            <span className="text-muted">En tres dimensiones.</span>
-          </h2>
+          <span className="section-tag">Visor 3D</span>
+          <h2 className="section-title">Explora y reserva tu espacio</h2>
           <p className="section-desc">
-            Navega por nuestro coworking virtual. Haz clic en cualquier sala o puesto para ver su disponibilidad y reservar al instante.
+            Haz clic en cualquier sala o puesto para ver disponibilidad y reservar al instante.
           </p>
         </div>
       </div>
@@ -101,25 +96,29 @@ const fetchOccupied = (start, end) => {
 
           {/* Legend */}
           <div className="viewer-legend">
-            <div className="legend-item">
-              <span className="legend-dot green" />
-              Disponible
-            </div>
-            <div className="legend-item">
-              <span className="legend-dot red" />
-              Reservada
-            </div>
-            <div className="legend-item">
-              <span className="legend-dot yellow" />
-              Seleccionada
-            </div>
+            <div className="legend-item"><span className="legend-dot green" />Libre</div>
+            <div className="legend-item"><span className="legend-dot red" />Ocupada</div>
+            <div className="legend-item"><span className="legend-dot yellow" />Seleccionada</div>
           </div>
 
           {/* Instructions */}
           <div className="viewer-instructions">
-            <span>🖱️ Arrastra para rotar</span>
-            <span>🔍 Scroll para zoom</span>
-            <span>👆 Clic en sala o puesto para seleccionar</span>
+            <span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>
+              Click izq. para rotar
+            </span>
+            <span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              Scroll para zoom
+            </span>
+            <span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+              Click der. para mover
+            </span>
+            <span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8a6 6 0 0 0 6 6h2a5 5 0 0 0 5-5v-5a2 2 0 0 0-2-2 2 2 0 0 0-2 2"/></svg>
+              Clic para seleccionar
+            </span>
           </div>
         </div>
 
@@ -128,8 +127,11 @@ const fetchOccupied = (start, end) => {
           onClose={handlePanelClose}
           setBookingStart={setBookingStart}
           setBookingEnd={setBookingEnd}
+          bookingStart={bookingStart}
+          bookingEnd={bookingEnd}
           occupiedSpaces={occupiedSpaces}
           fetchOccupied={fetchOccupied}
+          onShowToast={onShowToast}
         />
       </div>
     </section>

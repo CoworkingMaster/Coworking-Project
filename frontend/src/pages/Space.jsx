@@ -1,40 +1,30 @@
 import { useState, useEffect } from "react"
 import CoworkingScene from "../components/CoworkingScene"
 import BookingPanel from "../components/BookingPanel"
+import { apiFetch } from "../utils/api"
 
-export default function Spaces() {
+export default function Spaces({ onShowToast }) {
 
   const [selectedRoom, setSelectedRoom] = useState(null)
-
   const [occupiedSpaces, setOccupiedSpaces] = useState([])
   const [bookingStart, setBookingStart] = useState(null)
   const [bookingEnd, setBookingEnd] = useState(null)
-
   const [myReservations, setMyReservations] = useState([])
   const [reservationsInfo, setReservationsInfo] = useState([])
 
-
   const fetchOccupied = (start, end) => {
-
     if (!start || !end) return
-
-    fetch(`http://localhost:8000/api/reservations/occupied/?fecha_inicio=${start}&fecha_fin=${end}`, {
-      credentials: "include"
-    })
+    apiFetch(`/api/reservations/occupied/?fecha_inicio=${start}&fecha_fin=${end}`)
       .then(res => {
-        if (!res.ok) throw new Error("Error fetching reservations")
+        if (!res.ok) throw new Error()
         return res.json()
       })
       .then(data => {
-
         setOccupiedSpaces(Array.isArray(data?.occupied_spaces) ? data.occupied_spaces : [])
         setMyReservations(Array.isArray(data?.my_reservations) ? data.my_reservations : [])
         setReservationsInfo(Array.isArray(data?.reservations) ? data.reservations : [])
-
       })
-      .catch(err => {
-        console.error("Error loading reservations:", err)
-      })
+      .catch(() => {})
   }
 
 
@@ -64,15 +54,11 @@ export default function Spaces() {
   /* ---------- REFRESH AUTOMÁTICO ---------- */
 
   useEffect(() => {
-
     if (!bookingStart || !bookingEnd) return
-
     const interval = setInterval(() => {
       fetchOccupied(bookingStart, bookingEnd)
-    }, 3000)
-
+    }, 30000)
     return () => clearInterval(interval)
-
   }, [bookingStart, bookingEnd])
 
 
@@ -135,6 +121,7 @@ export default function Spaces() {
         fetchOccupied={fetchOccupied}
         bookingStart={bookingStart}
         bookingEnd={bookingEnd}
+        onShowToast={onShowToast}
       />
 
     </div>
