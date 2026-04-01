@@ -34,6 +34,9 @@ urlpatterns = [
     #Reserva
     path('api/reservations/', include('reservations.urls')),
 
+    # Analiticas admin
+    path('api/analytics/', include('analytics.urls')),
+
     # Google OAuth
     path('api/auth/google/', google_login, name='google-login'),
 ]

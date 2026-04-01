@@ -4,28 +4,18 @@ import { apiFetch } from '../utils/api'
 import { PLAN_LABELS, QUICK_ACTIONS } from '../data/dashboardLabels'
 import './Dashboard.css'
 
-const PLAN_LABELS = {
-  standard: { label: 'Standard', color: '#0071e3', emoji: '🌱' },
-  premium: { label: 'Premium', color: '#9b59b6', emoji: '⭐' },
-  enterprise: { label: 'Enterprise', color: '#e67e22', emoji: '🚀' },
-}
+const isAdminUser = (u) => Boolean(u?.is_staff || u?.is_superuser || u?.role === 'enterprise')
 
-const QUICK_ACTIONS = [
-  { icon: '📅', title: 'Reservar espacio', desc: 'Encuentra y reserva tu sala o escritorio', link: '/spaces' },
-  { icon: '🗓️', title: 'Mis reservas', desc: 'Consulta y gestiona tus reservas activas', link: null },
-  { icon: '👤', title: 'Mi perfil', desc: 'Actualiza tus datos personales y plan', link: null },
-  { icon: '📊', title: 'Estadísticas', desc: 'Revisa tu actividad en WorkHub', link: null },
-]
-
-export default function Dashboard({ user, onLogout }) {
+export default function Dashboard({ user, onLogout, authLoading = false }) {
   const navigate = useNavigate()
   const [loggingOut, setLoggingOut] = useState(false)
   const plan = PLAN_LABELS[user?.role] ?? PLAN_LABELS.standard
+  const isAdmin = isAdminUser(user)
 
   // Si no hay usuario redirige al inicio
   useEffect(() => {
-    if (!user) navigate('/')
-  }, [user, navigate])
+    if (!authLoading && !user) navigate('/')
+  }, [authLoading, user, navigate])
 
   const handleLogout = async () => {
     try {
@@ -38,7 +28,18 @@ export default function Dashboard({ user, onLogout }) {
     }
   }
 
-  if (!user) return null
+  if (authLoading || !user) return null
+
+  const actions = QUICK_ACTIONS.map((action) => {
+    if (action.adminOnly && !isAdmin) {
+      return {
+        ...action,
+        link: null,
+        desc: 'Disponible solo para administradores',
+      }
+    }
+    return action
+  })
 
   const initials = `${user.first_name?.[0] ?? ''}${user.last_name?.[0] ?? ''}`.toUpperCase() || user.email?.[0]?.toUpperCase()
 
@@ -108,9 +109,9 @@ export default function Dashboard({ user, onLogout }) {
         <section className="dash-section">
           <h2 className="dash-section-title">Acciones rápidas</h2>
           <div className="dash-actions-grid">
-            {QUICK_ACTIONS.map((action) => (
+            {actions.map((action) => (
               <button
-                key={action.title}
+                key={action.id}
                 className={`dash-card dash-action-card${action.link ? '' : ' dash-action-disabled'}`}
                 onClick={() => action.link && navigate(action.link)}
                 title={action.link ? undefined : 'Próximamente disponible'}

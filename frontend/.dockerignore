@@ -3,6 +3,8 @@
 
 # Dependencias
 node_modules/
+.npm-cache/
+npm-cache/
 
 # Build output
 dist/

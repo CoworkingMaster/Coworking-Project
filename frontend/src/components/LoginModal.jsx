@@ -92,16 +92,16 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister, onLogi
 
         <form className="modal-form" onSubmit={handleSubmit} noValidate>
           <div className="form-group">
-            <label htmlFor="login-email">Email</label>
+            <label htmlFor="login-email">Email o usuario</label>
             <input
               id="login-email"
-              type="email"
+              type="text"
               name="email"
-              placeholder="tu@email.com"
+              placeholder="tu@email.com o admin"
               className="form-input"
               value={form.email}
               onChange={handleChange}
-              autoComplete="email"
+              autoComplete="username"
             />
           </div>
 

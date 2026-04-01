@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import './Navbar.css'
 
 export default function Navbar({ onLoginClick, onRegisterClick, user }) {
@@ -66,7 +67,7 @@ export default function Navbar({ onLoginClick, onRegisterClick, user }) {
 
           <div className="nav-actions">
             {user ? (
-              <a href="/dashboard" className="btn-primary-sm">Mi cuenta</a>
+              <Link to="/dashboard" className="btn-primary-sm">Mi cuenta</Link>
             ) : (
               <>
                 <button className="btn-text" onClick={onLoginClick}>Iniciar sesión</button>

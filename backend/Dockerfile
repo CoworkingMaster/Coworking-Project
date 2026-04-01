@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.7
+
 # ──────────────────────────────────────────────
 # Stage 1 — Builder: compila wheels con herramientas de build
 # (compilador + headers de MariaDB solo aquí, no en la imagen final)
@@ -16,7 +18,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pip wheel --no-cache-dir --wheel-dir /wheels -r requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip wheel --wheel-dir /wheels -r requirements.txt
 
 # ──────────────────────────────────────────────
 # Stage 2 — Runtime: imagen final limpia y ligera
@@ -33,8 +36,6 @@ WORKDIR /app
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
        default-libmysqlclient-dev \
-       build-essential \
-       pkg-config \
        netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 # Instalar wheels pre-compilados: sin red, sin compilador

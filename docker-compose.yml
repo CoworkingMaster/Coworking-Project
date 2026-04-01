@@ -19,10 +19,10 @@ services:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
-      interval: 5s
-      timeout: 3s
-      retries: 15
-      start_period: 20s
+      interval: 3s
+      timeout: 2s
+      retries: 20
+      start_period: 10s
     networks:
       - workhub-net
 
@@ -37,6 +37,7 @@ services:
     container_name: workhub-backend
     restart: unless-stopped
     command: sh /app/wait_for_db.sh
+    init: true
     env_file: .env
     environment:
       DB_HOST: db
@@ -50,9 +51,9 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
+      - backend_pip_cache:/root/.cache/pip
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     networks:
       - workhub-net
 
@@ -65,12 +66,15 @@ services:
       dockerfile: Dockerfile
     container_name: workhub-frontend
     restart: unless-stopped
+    init: true
     ports:
-      - "5173:5173"
+      - "${FRONTEND_PORT:-5173}:5173"
     volumes:
+      - frontend_node_modules:/app/node_modules
       - ./frontend/src:/app/src        # solo el código fuente, HMR instantáneo
       - ./frontend/public:/app/public
       - ./frontend/index.html:/app/index.html
+      - ./frontend/vite.config.js:/app/vite.config.js
     depends_on:
       - backend
     networks:
@@ -78,6 +82,8 @@ services:
 
 volumes:
   mysql_data:
+  frontend_node_modules:
+  backend_pip_cache:
 
 networks:
   workhub-net:
