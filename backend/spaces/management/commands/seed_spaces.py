@@ -15,8 +15,8 @@ class Command(BaseCommand):
             {"nombre": "Sala Estrategia", "capacidad": 8, "tipo": "sala"},
             {"nombre": "Sala Creativa", "capacidad": 6, "tipo": "sala"},
             {"nombre": "Sala Ejecutiva", "capacidad": 12, "tipo": "sala"},
-            {"nombre": "Phone Booth 1", "capacidad": 1, "tipo": "sala"},
-            {"nombre": "Phone Booth 2", "capacidad": 1, "tipo": "sala"},
+            {"nombre": "Phone Booth 1", "capacidad": 1, "tipo": "puesto"},
+            {"nombre": "Phone Booth 2", "capacidad": 1, "tipo": "puesto"},
 
             #Puestos de trabajo individuales
             {"nombre": "Puesto 1", "capacidad": 1, "tipo": "puesto"},

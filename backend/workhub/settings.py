@@ -164,7 +164,7 @@ REST_FRAMEWORK = {
 # En desarrollo permitir el frontend local
 CORS_ALLOWED_ORIGINS = os.getenv(
     'CORS_ALLOWED_ORIGINS',
-    'http://localhost:5173,http://127.0.0.1:5173'
+    'http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174'
 ).split(',')
 CORS_ALLOW_CREDENTIALS = True
 AUTH_USER_MODEL = "users.User"
@@ -183,7 +183,7 @@ CSRF_COOKIE_HTTPONLY = False   # JS puede leer la cookie csrftoken
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_TRUSTED_ORIGINS = os.getenv(
     'CSRF_TRUSTED_ORIGINS',
-    'http://localhost:5173,http://127.0.0.1:5173'
+    'http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174'
 ).split(',')
 
 # ─── Hasher de contraseñas: bcrypt como primera opción ───
@@ -205,4 +205,4 @@ GMAIL_SENDER = os.getenv('GMAIL_SENDER', 'WorkHub <noreply@workhub.com>')
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 
 # ─── URL base del frontend (para enlaces en emails) ───
-FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5174')

@@ -79,17 +79,36 @@ def register(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_view(request):
-    email = request.data.get('email', '').strip().lower()
+    identifier_raw = request.data.get('email', '').strip()
+    identifier = identifier_raw.lower()
     password = request.data.get('password', '')
 
-    if not email or not password:
+    if not identifier_raw or not password:
         return Response(
             {"error": "Email y contraseña son obligatorios"},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Django autentica por username; nuestro username es el email
-    user = authenticate(request, username=email, password=password)
+    # Compatibilidad: permitir login por username o por email.
+    # Esto evita problemas con usuarios creados manualmente (p.ej. superuser "admin").
+    candidate_usernames = []
+
+    direct_username = User.objects.filter(username__iexact=identifier_raw).values_list('username', flat=True).first()
+    if direct_username:
+        candidate_usernames.append(direct_username)
+
+    email_username = User.objects.filter(email__iexact=identifier).values_list('username', flat=True).first()
+    if email_username and email_username not in candidate_usernames:
+        candidate_usernames.append(email_username)
+
+    if identifier not in candidate_usernames:
+        candidate_usernames.append(identifier)
+
+    user = None
+    for candidate in candidate_usernames:
+        user = authenticate(request, username=candidate, password=password)
+        if user is not None:
+            break
 
     if user is None:
         return Response(
@@ -297,6 +316,8 @@ def _user_payload(user):
         "first_name": user.first_name,
         "last_name": user.last_name,
         "role": user.role,
+        "is_staff": user.is_staff,
+        "is_superuser": user.is_superuser,
         "phone": user.phone,
         "company": user.company,
     }
