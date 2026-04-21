@@ -31,7 +31,6 @@ export default function BookingPanel({
   onClose,
   setBookingStart,
   setBookingEnd,
-  occupiedSpaces,
   fetchOccupied,
   bookingStart,
   bookingEnd,

@@ -1,13 +1,6 @@
 import './Footer.css'
 
 export default function Footer() {
-  const scrollTo = (id) => {
-    const el = document.getElementById(id)
-    if (el) {
-      window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' })
-    }
-  }
-
   return (
     <footer className="footer">
       <div className="container">

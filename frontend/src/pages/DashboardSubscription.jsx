@@ -36,7 +36,7 @@ export default function DashboardSubscription({ user, onLogout, onUserUpdate, sh
       } else {
         showToast?.(
           'El cambio no se aplicó',
-          `El servidor sigue con el plan «${labelActual}». Revisa el backend o recarga la página.`,
+          `Pediste «${labelRequested}» pero el servidor sigue en «${labelActual}». Revisa el backend o recarga.`,
           'error',
         )
       }
