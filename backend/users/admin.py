@@ -11,14 +11,21 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('-date_joined',)
 
     fieldsets = UserAdmin.fieldsets + (
-        ('Información WorkHub', {
-            'fields': ('role', 'phone', 'company', 'vigente_hasta')
-        }),
+        (
+            'WorkHub — plan / suscripción',
+            {
+                'fields': ('role', 'phone', 'company', 'job_title', 'vigente_hasta'),
+                'description': (
+                    'El plan no es un modelo aparte: está en el campo «role» del usuario '
+                    '(standard, premium, enterprise). La web en /dashboard/subscription actualiza ese campo.'
+                ),
+            },
+        ),
     )
 
     add_fieldsets = UserAdmin.add_fieldsets + (
         ('Información WorkHub', {
-            'fields': ('email', 'first_name', 'last_name', 'role', 'phone', 'company')
+            'fields': ('email', 'first_name', 'last_name', 'role', 'phone', 'company', 'job_title')
         }),
     )
 

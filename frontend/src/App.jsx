@@ -13,6 +13,8 @@ import SpacesSection from './sections/SpacesSection'
 import PricingSection from './sections/PricingSection'
 import ContactSection from './sections/ContactSection'
 import Dashboard from './pages/Dashboard'
+import DashboardProfile from './pages/DashboardProfile'
+import DashboardSubscription from './pages/DashboardSubscription'
 import Reservations from './pages/Reservations'
 import ResetPassword from './pages/ResetPassword'
 import Spaces from './pages/Space'
@@ -135,6 +137,11 @@ function App() {
     showToast('Hasta pronto', 'Has cerrado sesión correctamente')
   }, [showToast])
 
+  const handleUserSync = useCallback((payload) => {
+    if (!payload || typeof payload !== 'object') return
+    setUser((prev) => ({ ...(prev || {}), ...payload }))
+  }, [])
+
   return (
     <>
       <Routes>
@@ -159,6 +166,28 @@ function App() {
         <Route
           path="/dashboard"
           element={<Dashboard user={user} onLogout={handleLogout} />}
+        />
+        <Route
+          path="/dashboard/profile"
+          element={(
+            <DashboardProfile
+              user={user}
+              onLogout={handleLogout}
+              onUserUpdate={handleUserSync}
+              showToast={showToast}
+            />
+          )}
+        />
+        <Route
+          path="/dashboard/subscription"
+          element={(
+            <DashboardSubscription
+              user={user}
+              onLogout={handleLogout}
+              onUserUpdate={handleUserSync}
+              showToast={showToast}
+            />
+          )}
         />
         <Route
         path="/spaces"

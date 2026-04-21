@@ -1,7 +1,6 @@
 import { useRef, useEffect, useMemo, useState } from "react"
 import { Canvas, useThree, useFrame } from "@react-three/fiber"
 import { OrbitControls, Html, RoundedBox, Environment } from "@react-three/drei"
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing"
 import * as THREE from "three"
 import { rooms, deskPositions, plantPositions } from "../data/rooms"
 
@@ -551,10 +550,12 @@ export default function CoworkingScene({
       <Canvas
         camera={{ position: [15, 18, 15], fov: 45 }}
         shadows
+        dpr={[1, 1.75]}
         gl={{
           antialias: true,
+          powerPreference: "high-performance",
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.1,
+          toneMappingExposure: 1.12,
         }}
       >
         <color attach="background" args={["#d9d0c4"]} />
@@ -567,12 +568,6 @@ export default function CoworkingScene({
           reservationsInfo={reservationsInfo}
           viewMode={viewMode}
         />
-
-        {/* ─── POST-PROCESSING ─── */}
-        <EffectComposer multisampling={4}>
-          <Bloom luminanceThreshold={0.88} luminanceSmoothing={0.4} intensity={0.25} />
-          <Vignette offset={0.3} darkness={0.4} />
-        </EffectComposer>
       </Canvas>
     </div>
   )

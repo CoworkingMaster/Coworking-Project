@@ -5,11 +5,11 @@ import json as _json
 
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import PasswordResetToken
+from .models import PasswordResetToken, ROLE_CHOICES
 from .email_utils import send_password_reset_email
 
 User = get_user_model()
@@ -117,11 +117,75 @@ def logout_view(request):
     return Response({"message": "Sesión cerrada"})
 
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@api_view(['GET', 'PATCH'])
+@permission_classes([AllowAny])
 def me(request):
-    """Devuelve los datos del usuario autenticado por cookie de sesión."""
-    return Response(_user_payload(request.user))
+    """GET: perfil o null. PATCH: actualizar datos (requiere sesión)."""
+    if not request.user.is_authenticated:
+        if request.method == 'PATCH':
+            return Response(
+                {"error": "Debes iniciar sesión para actualizar el perfil"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        return Response(None, status=status.HTTP_200_OK)
+
+    if request.method == 'GET':
+        return Response(_user_payload(request.user))
+
+    user = request.user
+    raw = request.data
+    try:
+        data = dict(raw) if raw is not None else {}
+    except (TypeError, ValueError):
+        data = {}
+
+    update_fields = []
+
+    if 'first_name' in data:
+        user.first_name = str(data['first_name'] or '').strip()[:150]
+        update_fields.append('first_name')
+    if 'last_name' in data:
+        user.last_name = str(data['last_name'] or '').strip()[:150]
+        update_fields.append('last_name')
+    if 'phone' in data:
+        user.phone = str(data['phone'] or '').strip()[:20]
+        update_fields.append('phone')
+    if 'company' in data:
+        user.company = str(data['company'] or '').strip()[:100]
+        update_fields.append('company')
+    if 'job_title' in data:
+        user.job_title = str(data['job_title'] or '').strip()[:120]
+        update_fields.append('job_title')
+
+    allowed_roles = {c[0] for c in ROLE_CHOICES}
+    if 'role' in data:
+        new_role = str(data['role'] or '').strip()
+        if new_role and new_role not in allowed_roles:
+            return Response(
+                {"error": "Plan no válido"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if new_role:
+            user.role = new_role
+            update_fields.append('role')
+
+    if 'email' in data:
+        email = str(data['email'] or '').strip().lower()
+        if email:
+            if User.objects.filter(email=email).exclude(pk=user.pk).exists():
+                return Response(
+                    {"error": "Ese email ya está registrado"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            user.email = email
+            user.username = email
+            update_fields.extend(['email', 'username'])
+
+    if update_fields:
+        user.save(update_fields=sorted(set(update_fields)))
+        user.refresh_from_db()
+
+    return Response(_user_payload(user))
 
 
 # ──────────────────────────────────────────────────────────
@@ -291,6 +355,7 @@ def google_login(request):
 # ──────────────────────────────────────────────────────────
 
 def _user_payload(user):
+    vigente = user.vigente_hasta
     return {
         "id": user.id,
         "email": user.email,
@@ -299,4 +364,8 @@ def _user_payload(user):
         "role": user.role,
         "phone": user.phone,
         "company": user.company,
+        "job_title": user.job_title,
+        "is_active": user.is_active,
+        "date_joined": user.date_joined.isoformat() if user.date_joined else None,
+        "vigente_hasta": vigente.isoformat() if vigente else None,
     }

@@ -14,12 +14,14 @@ ROLE_CHOICES = [
 class User(AbstractUser):
     phone = models.CharField(max_length=20, blank=True)
     company = models.CharField(max_length=100, blank=True)
+    job_title = models.CharField('cargo', max_length=120, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     vigente_hasta = models.DateTimeField(null=True, blank=True)
     role = models.CharField(
         max_length=20,
         choices=ROLE_CHOICES,
-        default='standard'
+        default='standard',
+        help_text='Plan de suscripción (standard / premium / enterprise). En la app, enterprise se muestra como SuperPro. No hay otro modelo de suscripción.',
     )
 
     def __str__(self):

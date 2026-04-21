@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { Link } from 'react-router-dom'
+import UserAvatar from './UserAvatar'
 import './Navbar.css'
 
 export default function Navbar({ onLoginClick, onRegisterClick, user }) {
@@ -34,6 +36,16 @@ export default function Navbar({ onLoginClick, onRegisterClick, user }) {
     setMobileOpen(false)
   }
 
+  const userInitials = useMemo(
+    () =>
+      user
+        ? `${user.first_name?.[0] ?? ''}${user.last_name?.[0] ?? ''}`.toUpperCase()
+          || user.email?.[0]?.toUpperCase()
+          || '?'
+        : '',
+    [user],
+  )
+
   const links = [
     { id: 'hero', label: 'Inicio' },
     { id: 'spaces', label: 'Espacios' },
@@ -66,7 +78,15 @@ export default function Navbar({ onLoginClick, onRegisterClick, user }) {
 
           <div className="nav-actions">
             {user ? (
-              <a href="/dashboard" className="btn-primary-sm">Mi cuenta</a>
+              <div className="nav-actions-user">
+                <UserAvatar
+                  userId={user.id}
+                  initials={userInitials}
+                  className="nav-user-avatar"
+                  title={user.email}
+                />
+                <Link to="/dashboard" className="btn-primary-sm">Mi cuenta</Link>
+              </div>
             ) : (
               <>
                 <button className="btn-text" onClick={onLoginClick}>Iniciar sesión</button>
@@ -91,11 +111,29 @@ export default function Navbar({ onLoginClick, onRegisterClick, user }) {
               <button onClick={() => scrollTo(link.id)}>{link.label}</button>
             </li>
           ))}
-          <li>
-            <button className="btn-primary-sm" onClick={() => { setMobileOpen(false); onLoginClick() }}>
-              Iniciar sesión
-            </button>
-          </li>
+          {user ? (
+            <li className="nav-mobile-account">
+              <UserAvatar
+                userId={user.id}
+                initials={userInitials}
+                className="nav-user-avatar nav-user-avatar--mobile"
+                title={user.email}
+              />
+              <Link
+                to="/dashboard"
+                className="btn-primary-sm"
+                onClick={() => setMobileOpen(false)}
+              >
+                Mi cuenta
+              </Link>
+            </li>
+          ) : (
+            <li>
+              <button className="btn-primary-sm" onClick={() => { setMobileOpen(false); onLoginClick() }}>
+                Iniciar sesión
+              </button>
+            </li>
+          )}
         </ul>
       </div>
     </>
