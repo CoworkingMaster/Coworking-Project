@@ -1,0 +1,204 @@
+/* Planes de membresía */
+
+.subscription-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+  min-width: 0;
+}
+
+.subscription-hero {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto;
+  padding-top: var(--space-sm);
+}
+
+.subscription-hero h1 {
+  margin: 0 0 10px;
+  font-size: clamp(26px, 3.5vw, 34px);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--color-text);
+}
+
+.subscription-hero p {
+  margin: 0;
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.subscription-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  align-items: stretch;
+}
+
+@media (max-width: 960px) {
+  .subscription-grid {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+}
+
+.subscription-card {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: var(--space-xl) var(--space-lg);
+  padding-top: calc(var(--space-xl) + 10px);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.subscription-card--current {
+  border: 2px solid var(--color-text);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+}
+
+.subscription-badge-actual {
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  background: var(--color-text);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  padding: 6px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.subscription-plan-pill {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: #ececec;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-md);
+}
+
+.subscription-price {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.5px;
+  margin-bottom: var(--space-xl);
+}
+
+.subscription-features {
+  list-style: none;
+  margin: 0 0 var(--space-xl);
+  padding: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.subscription-feat {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--color-text);
+  line-height: 1.4;
+}
+
+.subscription-feat-box {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border-radius: 3px;
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.subscription-feat--yes .subscription-feat-box {
+  background: var(--color-text);
+  border-color: var(--color-text);
+  color: #fff;
+}
+
+.subscription-feat--no {
+  color: var(--color-text-secondary);
+}
+
+.subscription-feat--no .subscription-feat-box {
+  background: transparent;
+  border-color: #d0d0d0;
+}
+
+.subscription-btn-choose {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-strong);
+  background: #ececec;
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.subscription-btn-choose:hover:not(:disabled) {
+  background: #e0e0e0;
+}
+
+.subscription-btn-choose:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.subscription-btn-cancel {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: none;
+  background: var(--color-text);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.subscription-btn-cancel:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.subscription-btn-cancel:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.subscription-btn-current {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-strong);
+  background: #f3f3f3;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: default;
+}

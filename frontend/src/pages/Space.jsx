@@ -3,12 +3,26 @@ import CoworkingScene from "../components/CoworkingScene"
 import BookingPanel from "../components/BookingPanel"
 import { apiFetch } from "../utils/api"
 
+function getInitialBookingRangeISO() {
+  const now = new Date()
+  const start = new Date(now)
+  start.setHours(now.getHours(), 0, 0, 0)
+  const end = new Date(start)
+  end.setHours(start.getHours() + 2)
+  return {
+    startISO: start.toISOString().slice(0, 16),
+    endISO: end.toISOString().slice(0, 16),
+  }
+}
+
+const INITIAL_BOOKING = getInitialBookingRangeISO()
+
 export default function Spaces({ onShowToast }) {
 
   const [selectedRoom, setSelectedRoom] = useState(null)
   const [occupiedSpaces, setOccupiedSpaces] = useState([])
-  const [bookingStart, setBookingStart] = useState(null)
-  const [bookingEnd, setBookingEnd] = useState(null)
+  const [bookingStart, setBookingStart] = useState(INITIAL_BOOKING.startISO)
+  const [bookingEnd, setBookingEnd] = useState(INITIAL_BOOKING.endISO)
   const [myReservations, setMyReservations] = useState([])
   const [reservationsInfo, setReservationsInfo] = useState([])
 
@@ -31,23 +45,7 @@ export default function Spaces({ onShowToast }) {
   /* ---------- CARGA INICIAL ---------- */
 
   useEffect(() => {
-
-    const now = new Date()
-
-    const start = new Date(now)
-    start.setHours(now.getHours(), 0, 0, 0)
-
-    const end = new Date(start)
-    end.setHours(start.getHours() + 2)
-
-    const startISO = start.toISOString().slice(0,16)
-    const endISO = end.toISOString().slice(0,16)
-
-    setBookingStart(startISO)
-    setBookingEnd(endISO)
-
-    fetchOccupied(startISO, endISO)
-
+    fetchOccupied(INITIAL_BOOKING.startISO, INITIAL_BOOKING.endISO)
   }, [])
 
 

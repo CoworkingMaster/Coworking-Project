@@ -5,8 +5,8 @@ export const PLAN_LABELS = {
 }
 
 export const QUICK_ACTIONS = [
-  { icon: '📅', title: 'Reservar espacio', desc: 'Encuentra y reserva tu sala o escritorio' },
-  { icon: '🗓️', title: 'Mis reservas', desc: 'Consulta y gestiona tus reservas activas' },
-  { icon: '👤', title: 'Mi perfil', desc: 'Actualiza tus datos personales y plan' },
-  { icon: '📊', title: 'Estadísticas', desc: 'Revisa tu actividad en WorkHub' },
+  { icon: '📅', title: 'Reservar espacio', desc: 'Encuentra y reserva tu sala o escritorio', link: '/spaces' },
+  { icon: '🗓️', title: 'Mis reservas', desc: 'Consulta y gestiona tus reservas activas', link: '/reservations' },
+  { icon: '👤', title: 'Mi perfil', desc: 'Actualiza tus datos personales y plan', link: '/dashboard/profile' },
+  { icon: '📊', title: 'Estadísticas', desc: 'Revisa tu actividad en WorkHub', link: null },
 ]

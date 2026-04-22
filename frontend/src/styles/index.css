@@ -196,6 +196,7 @@ button, input, select, textarea {
 .btn-primary-sm {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     padding: 8px 20px;
     background: var(--color-text);
     color: white;
@@ -204,6 +205,7 @@ button, input, select, textarea {
     border-radius: var(--radius-full);
     cursor: pointer;
     transition: var(--transition-base);
+    text-decoration: none;
 }
 
 .btn-primary-sm:hover {

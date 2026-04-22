@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { apiFetch } from '../utils/api'
+import UserAvatar from '../components/UserAvatar'
 import { rooms, deskPositions } from '../data/rooms'
 import { TAB_OPTIONS, TYPE_OPTIONS, MONTH_OPTIONS, SECTION_LABELS } from '../data/reservationLabels'
 import './Reservations.css'
@@ -50,6 +51,7 @@ const getDurationHours = (start, end) => {
 
 export default function Reservations({ user, onLogout }) {
   const navigate = useNavigate()
+  const location = useLocation()
   const [reservations, setReservations] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -262,14 +264,18 @@ export default function Reservations({ user, onLogout }) {
           </a>
           <nav className="res-nav">
             <button
-              className={`res-nav-link ${window.location.pathname === '/dashboard' ? 'active' : ''}`}
+              type="button"
+              className={`res-nav-link ${location.pathname === '/dashboard' || location.pathname.startsWith('/dashboard/') ? 'active' : ''}`}
               onClick={() => navigate('/dashboard')}
             >
               Inicio
             </button>
-            <button className="res-nav-link active">Mis reservas</button>
+            <button type="button" className={`res-nav-link ${location.pathname === '/reservations' ? 'active' : ''}`}>
+              Mis reservas
+            </button>
             <button
-              className="res-nav-link"
+              type="button"
+              className={`res-nav-link ${location.pathname === '/spaces' ? 'active' : ''}`}
               onClick={() => navigate('/spaces')}
             >
               Reservar
@@ -279,7 +285,7 @@ export default function Reservations({ user, onLogout }) {
             <span className={`res-badge res-badge-${user?.role ?? 'standard'}`}>
               {planLabelMap[user?.role] ?? 'Standard'}
             </span>
-            <div className="res-avatar">{initials}</div>
+            <UserAvatar userId={user?.id} initials={initials} className="res-avatar" title={user?.email} />
             <button
               className="res-logout-btn"
               onClick={onLogout}

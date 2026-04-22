@@ -1,7 +1,6 @@
 import { useRef, useEffect, useMemo, useState } from "react"
 import { Canvas, useThree, useFrame } from "@react-three/fiber"
 import { OrbitControls, Html, RoundedBox, Environment } from "@react-three/drei"
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing"
 import * as THREE from "three"
 import { rooms, deskPositions, plantPositions } from "../data/rooms"
 
@@ -120,7 +119,7 @@ function Chair({ x, z, rotY = 0 }) {
 
 /* ───────── ROOM ───────── */
 
-function Room({ room, isSelected, onClick, occupied, mine, reservation, count }) {
+function Room({ room, isSelected, onClick, occupied, mine, count }) {
   const [hovered, setHovered] = useState(false)
   const groupRef = useRef()
 
@@ -143,14 +142,6 @@ function Room({ room, isSelected, onClick, occupied, mine, reservation, count })
     groupRef.current.scale.x = THREE.MathUtils.lerp(groupRef.current.scale.x, target, 0.1)
     groupRef.current.scale.z = THREE.MathUtils.lerp(groupRef.current.scale.z, target, 0.1)
   })
-
-  const glassMat = useMemo(() => ({
-    color,
-    transparent: true,
-    opacity: isSelected ? 0.28 : 0.12,
-    roughness: 0.05,
-    metalness: 0.1,
-  }), [color, isSelected])
 
   return (
     <group
@@ -351,10 +342,12 @@ function Plant({ x, z }) {
 
 /* ───────── BOOKSHELF ───────── */
 
+const BOOKSHELF_BOOK_HEIGHTS = [0.22, 0.26, 0.2, 0.28, 0.24, 0.21, 0.27, 0.23]
+
 function Bookshelf({ x, z, rotY = 0 }) {
   const books = useMemo(() =>
     Array.from({ length: 8 }, (_, i) => ({
-      h: 0.18 + Math.random() * 0.12,
+      h: BOOKSHELF_BOOK_HEIGHTS[i],
       color: ["#c0392b", "#2980b9", "#27ae60", "#f39c12", "#8e44ad", "#1abc9c", "#e74c3c", "#3498db"][i],
       x: -0.28 + i * 0.08,
     })), [])
@@ -492,7 +485,6 @@ function Scene({
           onClick={onRoomSelect}
           occupied={occupied.includes(room.id)}
           mine={mine.includes(Number(room.id))}
-          reservation={reservations.find(r => Number(r.espacio) === Number(room.id))}
           count={reservationCounts[room.id] || 0}
         />
       ))}
@@ -551,10 +543,12 @@ export default function CoworkingScene({
       <Canvas
         camera={{ position: [15, 18, 15], fov: 45 }}
         shadows
+        dpr={[1, 1.75]}
         gl={{
           antialias: true,
+          powerPreference: "high-performance",
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.1,
+          toneMappingExposure: 1.12,
         }}
       >
         <color attach="background" args={["#d9d0c4"]} />
@@ -567,12 +561,6 @@ export default function CoworkingScene({
           reservationsInfo={reservationsInfo}
           viewMode={viewMode}
         />
-
-        {/* ─── POST-PROCESSING ─── */}
-        <EffectComposer multisampling={4}>
-          <Bloom luminanceThreshold={0.88} luminanceSmoothing={0.4} intensity={0.25} />
-          <Vignette offset={0.3} darkness={0.4} />
-        </EffectComposer>
       </Canvas>
     </div>
   )
