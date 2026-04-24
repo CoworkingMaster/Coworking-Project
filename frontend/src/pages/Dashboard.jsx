@@ -1,9 +1,21 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apiFetch } from '../utils/api'
-import UserAvatar from '../components/UserAvatar'
 import { PLAN_LABELS, QUICK_ACTIONS } from '../data/dashboardLabels'
 import './Dashboard.css'
+
+const PLAN_LABELS = {
+  standard: { label: 'Standard', color: '#0071e3', emoji: '🌱' },
+  premium: { label: 'Premium', color: '#9b59b6', emoji: '⭐' },
+  enterprise: { label: 'Enterprise', color: '#e67e22', emoji: '🚀' },
+}
+
+const QUICK_ACTIONS = [
+  { icon: '📅', title: 'Reservar espacio', desc: 'Encuentra y reserva tu sala o escritorio', link: '/spaces' },
+  { icon: '🗓️', title: 'Mis reservas', desc: 'Consulta y gestiona tus reservas activas', link: null },
+  { icon: '👤', title: 'Mi perfil', desc: 'Actualiza tus datos personales y plan', link: null },
+  { icon: '📊', title: 'Estadísticas', desc: 'Revisa tu actividad en WorkHub', link: null },
+]
 
 export default function Dashboard({ user, onLogout }) {
   const navigate = useNavigate()
@@ -52,7 +64,7 @@ export default function Dashboard({ user, onLogout }) {
       <main className="dash-main">
         {/* Hero bienvenida */}
         <section className="dash-hero">
-          <UserAvatar userId={user.id} initials={initials} className="dash-avatar" title={user.email} />
+          <div className="dash-avatar">{initials}</div>
           <div className="dash-hero-text">
             <h1>
               Hola, {user.first_name || 'Usuario'} 👋
