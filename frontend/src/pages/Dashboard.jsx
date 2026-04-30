@@ -4,15 +4,14 @@ import { apiFetch } from '../utils/api'
 import { PLAN_LABELS, QUICK_ACTIONS } from '../data/dashboardLabels'
 import './Dashboard.css'
 
-export default function Dashboard({ user, onLogout }) {
+export default function Dashboard({ user, onLogout, authChecked }) {
   const navigate = useNavigate()
   const [loggingOut, setLoggingOut] = useState(false)
   const plan = PLAN_LABELS[user?.role] ?? PLAN_LABELS.standard
 
-  // Si no hay usuario redirige al inicio
   useEffect(() => {
-    if (!user) navigate('/')
-  }, [user, navigate])
+    if (authChecked && !user) navigate('/')
+  }, [authChecked, user, navigate])
 
   const handleLogout = async () => {
     try {

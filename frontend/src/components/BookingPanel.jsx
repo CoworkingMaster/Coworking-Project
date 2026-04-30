@@ -35,6 +35,7 @@ export default function BookingPanel({
   bookingStart,
   bookingEnd,
   onShowToast,
+  user,
 }) {
   const today = useMemo(() => {
     const d = new Date()
@@ -208,6 +209,13 @@ export default function BookingPanel({
     }
   }
 
+  /* ── Verificar restricción de plan ── */
+  // Solo bloquear si el usuario está autenticado y su plan es Standard.
+  // Usuarios no autenticados pueden ver la UI (el backend rechaza la creación de reservas).
+  const isSala = selectedRoom?.type?.toLowerCase().includes('sala')
+  const isAuthenticatedStandard = user != null && user.role === 'standard'
+  const planBlocked = isSala && isAuthenticatedStandard && selectedRoom !== null
+
   /* ═══════════════ UI ═══════════════ */
   return (
     <div className="viewer-panel">
@@ -217,7 +225,19 @@ export default function BookingPanel({
         <button className="panel-close" onClick={onClose}>✕</button>
       </div>
 
-      {!selectedRoom ? (
+      {planBlocked ? (
+        <div className="panel-upgrade">
+          <div className="panel-upgrade-icon" aria-hidden>🔒</div>
+          <h4 className="panel-upgrade-title">Necesitas Premium</h4>
+          <p className="panel-upgrade-desc">
+            Las salas de reuniones están disponibles a partir del plan{' '}
+            <strong>Premium</strong>. Actualiza tu suscripción para reservarlas.
+          </p>
+          <a href="/dashboard/subscription" className="panel-upgrade-btn">
+            Ver planes →
+          </a>
+        </div>
+      ) : !selectedRoom ? (
         <div className="panel-empty">
           <div className="panel-empty-icon">
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">

@@ -17,7 +17,7 @@ function getInitialBookingRangeISO() {
 
 const INITIAL_BOOKING = getInitialBookingRangeISO()
 
-export default function Spaces({ onShowToast }) {
+export default function Spaces({ user, onShowToast }) {
 
   const [selectedRoom, setSelectedRoom] = useState(null)
   const [occupiedSpaces, setOccupiedSpaces] = useState([])
@@ -120,6 +120,7 @@ export default function Spaces({ onShowToast }) {
         bookingStart={bookingStart}
         bookingEnd={bookingEnd}
         onShowToast={onShowToast}
+        user={user}
       />
 
     </div>
