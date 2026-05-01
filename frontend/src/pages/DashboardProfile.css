@@ -13,6 +13,7 @@
 @media (max-width: 960px) {
   .profile-shell {
     grid-template-columns: 1fr;
+    padding: var(--space-xl) var(--space-md) var(--space-3xl);
   }
 }
 
@@ -515,4 +516,49 @@
   height: 0;
   opacity: 0;
   pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .profile-shell {
+    padding: var(--space-xl) 12px var(--space-3xl);
+    gap: var(--space-lg);
+  }
+
+  .profile-sidebar,
+  .profile-card {
+    padding: var(--space-lg);
+  }
+
+  .profile-top-actions {
+    width: 100%;
+  }
+
+  .profile-btn-ghost,
+  .profile-btn-primary {
+    flex: 1 1 auto;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .profile-usage-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+
+  .profile-usage-label {
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .profile-usage-value {
+    font-size: 18px;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  .profile-usage-sub {
+    line-height: 1.35;
+  }
 }
