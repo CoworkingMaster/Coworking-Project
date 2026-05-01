@@ -63,6 +63,44 @@ function MiniBars({ items = [], maxItems = 8 }) {
   )
 }
 
+function RoomHeatmap({ rows = [] }) {
+  if (!rows.length) {
+    return <p className="analytics-empty-text">Sin datos de uso horario.</p>
+  }
+
+  return (
+    <div className="analytics-heatmap">
+      {rows.map((day) => (
+        <div key={day.weekday} className="analytics-heatmap-row">
+          <div className="analytics-heatmap-day">{day.label}</div>
+          <div className="analytics-heatmap-cells">
+            {day.hours.map((slot) => {
+              let level = 'zero'
+              if (slot.value >= 6) level = 'high'
+              else if (slot.value >= 3) level = 'mid'
+              else if (slot.value >= 1) level = 'low'
+
+              return (
+                <div
+                  key={`${day.weekday}-${slot.hour}`}
+                  className={`analytics-heatmap-cell analytics-heatmap-cell-${level}`}
+                  title={`${day.label} ${slot.label}: ${slot.value} reservas`}
+                />
+              )
+            })}
+          </div>
+        </div>
+      ))}
+      <div className="analytics-heatmap-legend">
+        <span><i className="analytics-heatmap-cell analytics-heatmap-cell-zero" />0</span>
+        <span><i className="analytics-heatmap-cell analytics-heatmap-cell-low" />1-2</span>
+        <span><i className="analytics-heatmap-cell analytics-heatmap-cell-mid" />3-5</span>
+        <span><i className="analytics-heatmap-cell analytics-heatmap-cell-high" />6+</span>
+      </div>
+    </div>
+  )
+}
+
 export default function AdminAnalytics({ user, onLogout, authLoading = false }) {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
@@ -133,6 +171,11 @@ export default function AdminAnalytics({ user, onLogout, authLoading = false }) 
   const peakHours = reservations.peak_hours ?? []
   const weekdays = reservations.weekday_distribution ?? []
   const typeDistribution = reservations.type_distribution ?? []
+  const roomsAnalytics = data?.rooms ?? {}
+  const roomsTop = roomsAnalytics.top_by_occupancy ?? []
+  const roomsBottom = roomsAnalytics.bottom_by_occupancy ?? []
+  const roomsHeatmap = roomsAnalytics.usage_heatmap ?? []
+  const operatingWindow = roomsAnalytics.operating_window ?? {}
 
   const weeklyBars = reservationsWeekly.map((item) => ({
     label: item.week_start?.slice(5) ?? '',
@@ -224,6 +267,37 @@ export default function AdminAnalytics({ user, onLogout, authLoading = false }) 
           </article>
         </section>
 
+        <section className="analytics-grid analytics-grid-4">
+          <article className="analytics-card analytics-card-room">
+            <div className="analytics-card-label">Ocupacion operativa salas</div>
+            <div className="analytics-card-value">{roomsAnalytics.occupancy_rate_operational ?? 0}%</div>
+            <div className="analytics-card-foot">
+              {roomsAnalytics.reserved_operational_hours ?? 0}h / {roomsAnalytics.capacity_operational_hours ?? 0}h
+            </div>
+          </article>
+          <article className="analytics-card analytics-card-room">
+            <div className="analytics-card-label">Cancelacion de salas</div>
+            <div className="analytics-card-value">{roomsAnalytics.cancellation_rate ?? 0}%</div>
+            <div className="analytics-card-foot">
+              {roomsAnalytics.cancelled_requests ?? 0} canceladas de {roomsAnalytics.total_requests ?? 0}
+            </div>
+          </article>
+          <article className="analytics-card analytics-card-room">
+            <div className="analytics-card-label">Fill rate prime time</div>
+            <div className="analytics-card-value">{roomsAnalytics.prime_time_fill_rate ?? 0}%</div>
+            <div className="analytics-card-foot">
+              Ventana {operatingWindow.start_hour ?? 8}:00-{operatingWindow.end_hour ?? 20}:00
+            </div>
+          </article>
+          <article className="analytics-card analytics-card-room">
+            <div className="analytics-card-label">Saturacion de salas</div>
+            <div className="analytics-card-value">{roomsAnalytics.overloaded_rooms ?? 0}</div>
+            <div className="analytics-card-foot">
+              Infrautilizadas: {roomsAnalytics.underutilized_rooms ?? 0}
+            </div>
+          </article>
+        </section>
+
         <section className="analytics-grid analytics-grid-2">
           <article className="analytics-panel">
             <div className="analytics-panel-head">
@@ -299,6 +373,14 @@ export default function AdminAnalytics({ user, onLogout, authLoading = false }) 
         <section className="analytics-grid analytics-grid-2">
           <article className="analytics-panel">
             <div className="analytics-panel-head">
+              <h2>Mapa de uso por horario (salas)</h2>
+              <span>Ultimos {roomsAnalytics.period_days ?? 30} dias</span>
+            </div>
+            <RoomHeatmap rows={roomsHeatmap} />
+          </article>
+
+          <article className="analytics-panel">
+            <div className="analytics-panel-head">
               <h2>Salas y espacios mas reservados</h2>
             </div>
             <div className="analytics-table">
@@ -353,6 +435,54 @@ export default function AdminAnalytics({ user, onLogout, authLoading = false }) 
                 <span>Reservas (ultimos 14 dias)</span>
                 <strong>{reservationsDaily.reduce((acc, row) => acc + (row.value ?? 0), 0)}</strong>
               </div>
+            </div>
+          </article>
+        </section>
+
+        <section className="analytics-grid analytics-grid-2">
+          <article className="analytics-panel">
+            <div className="analytics-panel-head">
+              <h2>Top salas por ocupacion</h2>
+            </div>
+            <div className="analytics-table">
+              {roomsTop.length === 0 ? (
+                <p className="analytics-empty-text">No hay datos de salas suficientes.</p>
+              ) : (
+                roomsTop.map((room) => (
+                  <div key={room.room_id} className="analytics-table-row">
+                    <div>
+                      <div className="analytics-table-title">{room.room_name}</div>
+                      <div className="analytics-table-sub">
+                        Ocupacion {room.occupancy_rate_operational}% · Prime {room.prime_time_fill_rate}% · Cancelacion {room.cancellation_rate}%
+                      </div>
+                    </div>
+                    <div className="analytics-table-value">{room.reserved_operational_hours}h</div>
+                  </div>
+                ))
+              )}
+            </div>
+          </article>
+
+          <article className="analytics-panel">
+            <div className="analytics-panel-head">
+              <h2>Salas a revisar (baja ocupacion)</h2>
+            </div>
+            <div className="analytics-table">
+              {roomsBottom.length === 0 ? (
+                <p className="analytics-empty-text">No hay datos de salas suficientes.</p>
+              ) : (
+                roomsBottom.map((room) => (
+                  <div key={room.room_id} className="analytics-table-row">
+                    <div>
+                      <div className="analytics-table-title">{room.room_name}</div>
+                      <div className="analytics-table-sub">
+                        Ocupacion {room.occupancy_rate_operational}% · Reservas {room.reservations_count}
+                      </div>
+                    </div>
+                    <div className="analytics-table-value">{room.cancellations_count}</div>
+                  </div>
+                ))
+              )}
             </div>
           </article>
         </section>
