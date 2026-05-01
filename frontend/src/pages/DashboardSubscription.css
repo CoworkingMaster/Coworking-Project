@@ -44,6 +44,17 @@
   }
 }
 
+@media (max-width: 640px) {
+  .subscription-grid {
+    max-width: none;
+  }
+
+  .subscription-card {
+    padding: var(--space-lg);
+    padding-top: calc(var(--space-lg) + 10px);
+  }
+}
+
 .subscription-card {
   position: relative;
   background: #fff;
