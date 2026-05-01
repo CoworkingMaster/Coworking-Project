@@ -49,7 +49,7 @@ const getDurationHours = (start, end) => {
   return Math.max(0, diffMs / 1000 / 60 / 60)
 }
 
-export default function Reservations({ user, onLogout }) {
+export default function Reservations({ user, onLogout, authLoading = false }) {
   const navigate = useNavigate()
   const location = useLocation()
   const [reservations, setReservations] = useState([])
@@ -71,6 +71,8 @@ export default function Reservations({ user, onLogout }) {
   const initials = `${user?.first_name?.[0] ?? ''}${user?.last_name?.[0] ?? ''}`.toUpperCase() || user?.email?.[0]?.toUpperCase()
 
   useEffect(() => {
+    if (authLoading) return
+
     if (!user) {
       navigate('/')
       return
@@ -120,7 +122,7 @@ export default function Reservations({ user, onLogout }) {
       })
 
     return () => { cancelled = true }
-  }, [user, navigate, reloadKey])
+  }, [authLoading, user, navigate, reloadKey])
 
   const now = useMemo(() => new Date(), [])
   const monthStart = useMemo(() => new Date(now.getFullYear(), now.getMonth(), 1), [now])

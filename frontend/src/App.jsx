@@ -15,6 +15,7 @@ import ContactSection from './sections/ContactSection'
 import Dashboard from './pages/Dashboard'
 import DashboardProfile from './pages/DashboardProfile'
 import DashboardSubscription from './pages/DashboardSubscription'
+import AdminAnalytics from './pages/AdminAnalytics'
 import Reservations from './pages/Reservations'
 import ResetPassword from './pages/ResetPassword'
 import Spaces from './pages/Space'
@@ -96,6 +97,7 @@ function LandingPage({ user, onLoginClick, onRegisterClick, onShowToast, loginOp
 // ── App raíz con router ──────────────────────────────────
 function App() {
   const [user, setUser] = useState(null)
+  const [authLoading, setAuthLoading] = useState(true)
   const [loginOpen, setLoginOpen] = useState(false)
   const [registerOpen, setRegisterOpen] = useState(false)
   const [forgotOpen, setForgotOpen] = useState(false)
@@ -108,10 +110,12 @@ function App() {
 
   // Al montar, intenta recuperar la sesión activa desde la cookie
   useEffect(() => {
+    setAuthLoading(true)
     apiFetch('/api/me/')
       .then(r => r.ok ? r.json() : null)
       .then(data => { if (data) setUser(data) })
       .catch(() => {})
+      .finally(() => setAuthLoading(false))
   }, [])
 
   // Cierra modales con Escape
@@ -165,7 +169,7 @@ function App() {
         />
         <Route
           path="/dashboard"
-          element={<Dashboard user={user} onLogout={handleLogout} />}
+          element={<Dashboard user={user} onLogout={handleLogout} authLoading={authLoading} />}
         />
         <Route
           path="/dashboard/profile"
@@ -190,13 +194,17 @@ function App() {
           )}
         />
         <Route
-        path="/spaces"
-        element={<Spaces onShowToast={showToast} />}
+          path="/admin-analytics"
+          element={<AdminAnalytics user={user} onLogout={handleLogout} authLoading={authLoading} />}
+        />
+        <Route
+          path="/spaces"
+          element={<Spaces onShowToast={showToast} />}
         />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route
           path="/reservations"
-          element={<Reservations user={user} onLogout={handleLogout} />}
+          element={<Reservations user={user} onLogout={handleLogout} authLoading={authLoading} />}
         />
       </Routes>
 
@@ -212,4 +220,3 @@ function App() {
 }
 
 export default App
-
