@@ -201,8 +201,12 @@ export default function BookingPanel({
       setSlotStart(null)
       setSlotEnd(null)
       fetchDayReservations()
-    } catch {
-      onShowToast?.('Error al reservar', 'No se pudo completar la reserva. Inténtalo de nuevo.', 'error')
+    } catch (err) {
+      const msg = err?.message || 'No se pudo completar la reserva. Inténtalo de nuevo.'
+      const hint = msg.toLowerCase().includes('premium') || msg.toLowerCase().includes('standard')
+        ? `${msg} Puedes cambiar tu plan desde "Mi perfil > Suscripción".`
+        : msg
+      onShowToast?.('Error al reservar', hint, 'error')
     } finally {
       setLoading(false)
     }

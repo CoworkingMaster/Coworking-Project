@@ -6,6 +6,20 @@ import './DashboardSubscription.css'
 
 export default function DashboardSubscription({ user, onLogout, onUserUpdate, showToast }) {
   const [busyRole, setBusyRole] = useState(null)
+  const cycleEnd = user?.subscription_cycle_end ? new Date(user.subscription_cycle_end) : null
+  const cycleActive = Boolean(cycleEnd && Number.isFinite(cycleEnd.getTime()) && new Date() < cycleEnd)
+  const roleRank = { standard: 0, premium: 1, enterprise: 2 }
+  const formatMoney = (amount) => {
+    const num = Number(amount)
+    if (!Number.isFinite(num)) return null
+    return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(num)
+  }
+  const formatDate = (dateValue) => {
+    if (!dateValue) return null
+    const dt = new Date(dateValue)
+    if (!Number.isFinite(dt.getTime())) return null
+    return new Intl.DateTimeFormat('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(dt)
+  }
 
   const changePlan = async (role) => {
     setBusyRole(role)
@@ -32,7 +46,11 @@ export default function DashboardSubscription({ user, onLogout, onUserUpdate, sh
         ?? effective.role
 
       if (effective.role === role) {
-        showToast?.('Plan actualizado', `Tu plan es ahora ${labelActual}.`)
+        const extra =
+          effective.role_change_type === 'upgrade' && Number.isFinite(Number(effective.proration_estimate))
+            ? ` Diferencia estimada: ${formatMoney(effective.proration_estimate)}.`
+            : ''
+        showToast?.('Plan actualizado', `Tu plan es ahora ${labelActual}.${extra}`)
       } else {
         showToast?.(
           'El cambio no se aplicó',
@@ -48,6 +66,15 @@ export default function DashboardSubscription({ user, onLogout, onUserUpdate, sh
   }
 
   const handleCancelPaid = (currentRole) => {
+    if (cycleActive) {
+      showToast?.(
+        'Cambio bloqueado',
+        `No puedes bajar de plan hasta el fin del ciclo (${formatDate(cycleEnd)}).`,
+        'error',
+      )
+      return
+    }
+
     const msg =
       currentRole === 'enterprise'
         ? '¿Cancelar SuperPro y volver a Standard? Perderás salas ilimitadas y analíticas.'
@@ -80,7 +107,7 @@ export default function DashboardSubscription({ user, onLogout, onUserUpdate, sh
                   <span className="subscription-badge-actual">ACTUAL</span>
                 )}
                 <span className="subscription-plan-pill">{plan.name}</span>
-                <div className="subscription-price">{plan.pricePlaceholder} €/mes</div>
+                <div className="subscription-price">{formatMoney(plan.pricePlaceholder)} /mes</div>
 
                 <ul className="subscription-features">
                   {plan.features.map((f) => (
@@ -105,23 +132,36 @@ export default function DashboardSubscription({ user, onLogout, onUserUpdate, sh
                     <button
                       type="button"
                       className="subscription-btn-cancel"
-                      disabled={loading}
+                      disabled={loading || cycleActive}
                       onClick={() => handleCancelPaid(plan.backendRole)}
                     >
-                      {loading && busyRole === 'standard' ? 'Procesando…' : 'Cancelar'}
+                      {loading && busyRole === 'standard'
+                        ? 'Procesando…'
+                        : cycleActive
+                        ? `Disponible ${formatDate(cycleEnd)}`
+                        : 'Cancelar'}
                     </button>
                   )
                 ) : (
+                  (() => {
+                    const isDowngradeAttempt =
+                      roleRank[plan.backendRole] < roleRank[user.role]
+                    const blockedByCycle = isDowngradeAttempt && cycleActive
+                    return (
                   <button
                     type="button"
                     className="subscription-btn-choose"
-                    disabled={loading}
+                    disabled={loading || blockedByCycle}
                     onClick={() => changePlan(plan.backendRole)}
                   >
-                    {loading && busyRole === plan.backendRole
+                    {blockedByCycle
+                      ? `Bloqueado hasta ${formatDate(cycleEnd)}`
+                      : loading && busyRole === plan.backendRole
                       ? 'Actualizando…'
                       : `Elegir ${plan.name}`}
                   </button>
+                    )
+                  })()
                 )}
               </div>
             )
