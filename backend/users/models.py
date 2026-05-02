@@ -27,6 +27,8 @@ class User(AbstractUser):
     job_title = models.CharField('cargo', max_length=120, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     vigente_hasta = models.DateTimeField(null=True, blank=True)
+    subscription_cycle_start = models.DateTimeField(null=True, blank=True)
+    subscription_cycle_end = models.DateTimeField(null=True, blank=True)
     role = models.CharField(
         max_length=20,
         choices=ROLE_CHOICES,

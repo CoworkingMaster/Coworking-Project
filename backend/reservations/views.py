@@ -2,16 +2,63 @@ from rest_framework import viewsets
 from .models import Reserva
 from .serializers import ReservationSerializer
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.utils.dateparse import parse_datetime
 from django.utils import timezone
+from users.subscription import PREMIUM_ROOM_HOURS, ensure_paid_cycle, overlap_hours
 
 
 class ReservationViewSet(viewsets.ModelViewSet):
     queryset = Reserva.objects.all()
     serializer_class = ReservationSerializer
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
+        user = self.request.user
+        if not user or not user.is_authenticated:
+            raise PermissionDenied("Debes iniciar sesión para reservar.")
+
+        espacio = serializer.validated_data.get("espacio")
+        fecha_inicio = serializer.validated_data.get("fecha_inicio")
+        fecha_fin = serializer.validated_data.get("fecha_fin")
+        estado = serializer.validated_data.get("estado")
+
+        if espacio and espacio.tipo == "sala" and estado != "cancelada":
+            if user.role == "standard":
+                raise PermissionDenied(
+                    "Tu plan Standard no incluye salas. Mejora a Premium o SuperPro para reservar salas."
+                )
+
+            if user.role == "premium":
+                cycle_start, cycle_end = ensure_paid_cycle(user, now=timezone.now(), persist=True)
+                used_hours = 0.0
+                reserved_qs = Reserva.objects.filter(
+                    usuario=user,
+                    estado__in=["activa", "finalizada"],
+                    espacio__tipo="sala",
+                )
+
+                for reserva in reserved_qs:
+                    used_hours += overlap_hours(
+                        reserva.fecha_inicio,
+                        reserva.fecha_fin,
+                        cycle_start,
+                        cycle_end,
+                    )
+
+                requested_hours = overlap_hours(fecha_inicio, fecha_fin, cycle_start, cycle_end)
+                projected_hours = used_hours + requested_hours
+                if projected_hours > PREMIUM_ROOM_HOURS:
+                    raise PermissionDenied(
+                        (
+                            f"Has alcanzado el límite de {int(PREMIUM_ROOM_HOURS)}h de salas en tu ciclo actual. "
+                            f"Llevas {round(used_hours, 2)}h y esta reserva subiría a {round(projected_hours, 2)}h. "
+                            "Puedes esperar al próximo ciclo o mejorar a SuperPro."
+                        )
+                    )
+
         serializer.save(usuario=self.request.user)
 
 

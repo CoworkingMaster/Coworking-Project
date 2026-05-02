@@ -42,9 +42,13 @@ export const createReservation = async (reservation) => {
   })
 
   if (!res.ok) {
-    const error = await res.json()
+    const error = await res.json().catch(() => ({}))
+    const detail =
+      (typeof error?.detail === 'string' && error.detail) ||
+      (typeof error?.error === 'string' && error.error) ||
+      'No se pudo crear la reserva.'
     console.error("Error backend:", error)
-    throw new Error("Error creating reservation")
+    throw new Error(detail)
   }
 
   return await res.json()

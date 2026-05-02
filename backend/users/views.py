@@ -4,6 +4,7 @@ import urllib.parse
 import json as _json
 
 from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -11,6 +12,14 @@ from rest_framework import status
 
 from .models import PasswordResetToken, ROLE_CHOICES
 from .email_utils import send_password_reset_email
+from .subscription import (
+    PAID_ROLES,
+    add_one_month,
+    compute_proration_estimate,
+    ensure_paid_cycle,
+    is_cycle_active,
+    role_change_type,
+)
 
 User = get_user_model()
 
@@ -51,14 +60,28 @@ def register(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    user = User.objects.create_user(
-        username=email,
-        email=email,
-        password=password,
-        first_name=first_name,
-        last_name=last_name,
-        role=role,
-    )
+    allowed_roles = {c[0] for c in ROLE_CHOICES}
+    if role not in allowed_roles:
+        return Response(
+            {"error": "Plan no válido"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    create_kwargs = {
+        "username": email,
+        "email": email,
+        "password": password,
+        "first_name": first_name,
+        "last_name": last_name,
+        "role": role,
+    }
+
+    if role in PAID_ROLES:
+        now = timezone.now()
+        create_kwargs["subscription_cycle_start"] = now
+        create_kwargs["subscription_cycle_end"] = add_one_month(now)
+
+    user = User.objects.create_user(**create_kwargs)
 
     # Iniciar sesión automáticamente tras el registro
     login(request, user)
@@ -130,6 +153,9 @@ def me(request):
         return Response(None, status=status.HTTP_200_OK)
 
     if request.method == 'GET':
+        if request.user.role in PAID_ROLES:
+            ensure_paid_cycle(request.user, now=timezone.now(), persist=True)
+            request.user.refresh_from_db()
         return Response(_user_payload(request.user))
 
     user = request.user
@@ -140,6 +166,7 @@ def me(request):
         data = {}
 
     update_fields = []
+    role_change_payload = None
 
     if 'first_name' in data:
         user.first_name = str(data['first_name'] or '').strip()[:150]
@@ -165,9 +192,58 @@ def me(request):
                 {"error": "Plan no válido"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        if new_role:
+        if new_role and new_role != user.role:
+            now = timezone.now()
+            change_type = role_change_type(user.role, new_role)
+
+            if change_type == "downgrade" and is_cycle_active(user, now):
+                return Response(
+                    {
+                        "error": "No puedes bajar de plan durante un ciclo activo. Espera al fin del ciclo o mantén tu plan actual.",
+                        "effective_role": user.role,
+                        "cycle_end": user.subscription_cycle_end.isoformat() if user.subscription_cycle_end else None,
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            proration_estimate = 0.0
+            if change_type == "upgrade":
+                if is_cycle_active(user, now):
+                    cycle_start = user.subscription_cycle_start
+                    cycle_end = user.subscription_cycle_end
+                    proration_estimate = compute_proration_estimate(
+                        user.role,
+                        new_role,
+                        cycle_start=cycle_start,
+                        cycle_end=cycle_end,
+                        now=now,
+                    )
+                else:
+                    proration_estimate = compute_proration_estimate(user.role, new_role, now=now)
+                    user.subscription_cycle_start = now
+                    user.subscription_cycle_end = add_one_month(now)
+                    update_fields.extend(['subscription_cycle_start', 'subscription_cycle_end'])
+
+            if change_type == "downgrade":
+                if new_role in PAID_ROLES:
+                    user.subscription_cycle_start = now
+                    user.subscription_cycle_end = add_one_month(now)
+                    update_fields.extend(['subscription_cycle_start', 'subscription_cycle_end'])
+                else:
+                    user.subscription_cycle_start = None
+                    user.subscription_cycle_end = None
+                    update_fields.extend(['subscription_cycle_start', 'subscription_cycle_end'])
+
             user.role = new_role
             update_fields.append('role')
+
+            role_change_payload = {
+                "role_change_type": change_type,
+                "effective_role": new_role,
+                "proration_estimate": proration_estimate,
+                "cycle_start": user.subscription_cycle_start.isoformat() if user.subscription_cycle_start else None,
+                "cycle_end": user.subscription_cycle_end.isoformat() if user.subscription_cycle_end else None,
+            }
 
     if 'email' in data:
         email = str(data['email'] or '').strip().lower()
@@ -185,7 +261,10 @@ def me(request):
         user.save(update_fields=sorted(set(update_fields)))
         user.refresh_from_db()
 
-    return Response(_user_payload(user))
+    payload = _user_payload(user)
+    if role_change_payload:
+        payload.update(role_change_payload)
+    return Response(payload)
 
 
 # ──────────────────────────────────────────────────────────
@@ -356,6 +435,8 @@ def google_login(request):
 
 def _user_payload(user):
     vigente = user.vigente_hasta
+    cycle_start = user.subscription_cycle_start
+    cycle_end = user.subscription_cycle_end
     return {
         "id": user.id,
         "email": user.email,
@@ -368,4 +449,6 @@ def _user_payload(user):
         "is_active": user.is_active,
         "date_joined": user.date_joined.isoformat() if user.date_joined else None,
         "vigente_hasta": vigente.isoformat() if vigente else None,
+        "subscription_cycle_start": cycle_start.isoformat() if cycle_start else None,
+        "subscription_cycle_end": cycle_end.isoformat() if cycle_end else None,
     }
