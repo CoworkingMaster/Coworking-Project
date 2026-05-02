@@ -110,7 +110,6 @@ function App() {
 
   // Al montar, intenta recuperar la sesión activa desde la cookie
   useEffect(() => {
-    setAuthLoading(true)
     apiFetch('/api/me/')
       .then(r => r.ok ? r.json() : null)
       .then(data => { if (data) setUser(data) })
@@ -194,6 +193,10 @@ function App() {
               authChecked={authChecked}
             />
           )}
+        />
+        <Route
+          path="/admin-analytics"
+          element={<AdminAnalytics user={user} onLogout={handleLogout} authLoading={!authChecked} />}
         />
         <Route
           path="/spaces"

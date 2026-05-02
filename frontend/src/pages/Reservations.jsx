@@ -71,8 +71,6 @@ export default function Reservations({ user, onLogout, authChecked }) {
   const initials = `${user?.first_name?.[0] ?? ''}${user?.last_name?.[0] ?? ''}`.toUpperCase() || user?.email?.[0]?.toUpperCase()
 
   useEffect(() => {
-    if (authLoading) return
-
     if (!user) {
       if (authChecked) navigate('/')
       return
