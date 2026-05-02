@@ -1,7 +1,7 @@
-# WorkHub 3D — Documentación Técnica del Sistema de Autenticación
+# WorkHub 3D — Documentación Técnica
 
-> **Versión:** 1.0.0 · **Fecha:** marzo 2026  
-> **Stack:** Django 4.2 · DRF · simplejwt · React 19 · Vite 7 · React Router v7 · MySQL 8 · Docker
+> **Versión:** 2.0.0 · **Fecha:** mayo 2026  
+> **Stack:** Django 4.2 · DRF · React 19 · Vite · React Router v6 · MySQL 8 · Docker
 
 ---
 
@@ -43,6 +43,16 @@
 14. [Flujos completos end-to-end](#14-flujos-completos-end-to-end)
 15. [Tabla de endpoints](#15-tabla-de-endpoints)
 16. [Seguridad — Decisiones de diseño](#16-seguridad--decisiones-de-diseño)
+17. [Panel de administración](#17-panel-de-administración)
+    - 17.1 [Acceso y redirección](#171-acceso-y-redirección)
+    - 17.2 [Protección de endpoints](#172-protección-de-endpoints-backend)
+    - 17.3 [Panel de analíticas](#173-panel-de-analíticas----admin-analytics)
+    - 17.4 [Gestión de reservas](#174-gestión-de-reservas----admin-reservations)
+    - 17.5 [Gestión de usuarios](#175-gestión-de-usuarios----admin-users)
+    - 17.6 [Componente de navegación admin](#176-componente-de-navegación-admin)
+18. [Datos de prueba (seeds)](#18-datos-de-prueba-seeds)
+    - 18.1 [Seed de espacios](#181-seed-de-espacios)
+    - 18.2 [Seed de usuarios y reservas demo](#182-seed-de-usuarios-y-reservas-demo)
 
 ---
 
@@ -1083,3 +1093,147 @@ ResetPasswordPage ← /reset-password?uid=...&token=...
 | **Secretos en repositorio** | Variables de entorno en `.env` excluido del `.gitignore` |
 | **Acceso inter-contenedor** | Red Docker interna `workhub-net`; el frontend nunca accede directamente a MySQL |
 | **Escalada de privilegios** | `UpdateProfileSerializer` no expone `email`, `role` ni `password` |
+
+---
+
+## 17. Panel de administración
+
+El sistema incluye tres paneles exclusivos para usuarios con `is_staff=True` o `is_superuser=True`.
+
+### 17.1 Acceso y redirección
+
+Al hacer login, si el usuario es admin, el frontend lo redirige automáticamente a `/admin-analytics` en lugar de `/dashboard` (`App.jsx`):
+
+```jsx
+navigate(userData?.is_staff || userData?.is_superuser ? '/admin-analytics' : '/dashboard')
+```
+
+### 17.2 Protección de endpoints (backend)
+
+Todos los endpoints de gestión admin están protegidos por `IsAnalyticsAdmin` (`backend/analytics/permissions.py`):
+
+```python
+class IsAnalyticsAdmin(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        if not user or not user.is_authenticated:
+            return False
+        return bool(user.is_staff or user.is_superuser)
+```
+
+Se aplica mediante `permission_classes = [IsAnalyticsAdmin]` en cada vista o mediante `get_permissions()` para evitar imports circulares.
+
+### 17.3 Panel de analíticas — `/admin-analytics`
+
+**Frontend:** `frontend/src/pages/AdminAnalytics.jsx`  
+**Backend:** `GET /api/analytics/admin/overview/` (`backend/analytics/views.py`)
+
+Muestra métricas en tiempo real calculadas en el backend:
+
+- Usuarios: total, crecimiento diario/semanal, serie de 14 días
+- Distribución de planes (standard / premium / enterprise)
+- Reservas: totales, activas, canceladas, finalizadas, duración media, ocupación próximos 7 días
+- Salas: ocupación operativa, prime time fill rate, tasa de cancelación, heatmap por hora y día
+
+### 17.4 Gestión de reservas — `/admin-reservations`
+
+**Frontend:** `frontend/src/pages/AdminReservations.jsx`  
+**Backend:** `backend/reservations/views.py` — `AdminReservationListView`, `AdminReservationDetailView`
+
+**Endpoints:**
+
+| Método | URL | Descripción |
+|--------|-----|-------------|
+| GET | `/api/admin/reservations/` | Lista paginada (20/página). Filtros: `estado`, `search` (email/nombre usuario) |
+| PATCH | `/api/admin/reservations/<id>/` | Cancela la reserva. Solo funciona si `estado == 'activa'` |
+| DELETE | `/api/admin/reservations/<id>/` | Elimina la reserva definitivamente |
+
+**Reglas de negocio:**
+- El botón "Cancelar" solo aparece en reservas con `estado = 'activa'`
+- El botón "Eliminar" está disponible en cualquier estado
+- No se puede cambiar a `finalizada` ni a `activa` desde este panel
+
+**Respuesta paginada:**
+```json
+{
+  "count": 85,
+  "num_pages": 5,
+  "page": 1,
+  "page_size": 20,
+  "results": [...]
+}
+```
+
+### 17.5 Gestión de usuarios — `/admin-users`
+
+**Frontend:** `frontend/src/pages/AdminUsers.jsx`  
+**Backend:** `backend/users/views.py` — `AdminUserListView`, `AdminUserDetailView`
+
+**Endpoints:**
+
+| Método | URL | Descripción |
+|--------|-----|-------------|
+| GET | `/api/admin/users/` | Lista paginada (20/página). Filtros: `role`, `is_active`, `search`. Excluye staff |
+| PATCH | `/api/admin/users/<id>/` | Actualiza `role`, `is_active` y/o `is_staff` |
+
+**Campos editables desde el panel:**
+- `role`: `standard` / `premium` / `enterprise`
+- `is_active`: activar o desactivar la cuenta
+- `is_staff`: conceder o revocar acceso admin
+
+Los usuarios con `is_staff=True` están excluidos del listado (no se pueden editar admins desde este panel).
+
+### 17.6 Componente de navegación admin
+
+**Archivo:** `frontend/src/components/AdminNav.jsx`
+
+Navbar compartido por los tres paneles. Recibe la prop `active` para marcar el enlace actual:
+
+```jsx
+<AdminNav user={user} onLogout={onLogout} active="reservations" />
+// active: 'analytics' | 'reservations' | 'users'
+```
+
+---
+
+## 18. Datos de prueba (seeds)
+
+### 18.1 Seed de espacios
+
+**Archivo:** `backend/spaces/management/commands/seed_spaces.py`
+
+Crea los 18 espacios del coworking (4 salas + 14 puestos) usando `get_or_create` para ser idempotente:
+
+```bash
+docker compose exec backend python manage.py seed_spaces
+```
+
+### 18.2 Seed de usuarios y reservas demo
+
+**Archivo:** `backend/reservations/management/commands/seed_demo.py`
+
+Crea 6 usuarios de prueba con roles variados y genera reservas pasadas (finalizadas/canceladas, últimas 2 semanas) y futuras (activas, próximos 7 días) respetando las restricciones de plan:
+
+- Standard: solo puestos
+- Premium y SuperPro: puestos y salas
+
+```bash
+# Crear datos demo
+docker compose exec backend python manage.py seed_demo
+
+# Borrar y recrear
+docker compose exec backend python manage.py seed_demo --flush
+```
+
+**Usuarios creados** (contraseña: `demo1234`):
+
+| Email | Plan |
+|-------|------|
+| ana.garcia@demo.com | Standard |
+| carlos.ruiz@demo.com | Premium |
+| sofia.martin@demo.com | Premium |
+| luis.torres@demo.com | SuperPro |
+| marta.lopez@demo.com | Standard |
+| pablo.sanchez@demo.com | SuperPro |
+
+El seed es **idempotente** sin `--flush`: si un usuario demo ya existe, lo omite y continúa con las reservas.

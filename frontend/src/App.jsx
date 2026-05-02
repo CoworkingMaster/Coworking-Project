@@ -16,6 +16,8 @@ import Dashboard from './pages/Dashboard'
 import DashboardProfile from './pages/DashboardProfile'
 import DashboardSubscription from './pages/DashboardSubscription'
 import AdminAnalytics from './pages/AdminAnalytics'
+import AdminReservations from './pages/AdminReservations'
+import AdminUsers from './pages/AdminUsers'
 import Reservations from './pages/Reservations'
 import ResetPassword from './pages/ResetPassword'
 import Spaces from './pages/Space'
@@ -42,7 +44,7 @@ function LandingPage({ user, onLoginClick, onRegisterClick, onShowToast, loginOp
 
   const handleLoginSuccess = useCallback((userData) => {
     onLoginSuccess(userData)
-    navigate('/dashboard')
+    navigate(userData?.is_staff || userData?.is_superuser ? '/admin-analytics' : '/dashboard')
   }, [onLoginSuccess, navigate])
 
   const handleRegisterSuccess = useCallback((userData) => {
@@ -197,6 +199,14 @@ function App() {
         <Route
           path="/admin-analytics"
           element={<AdminAnalytics user={user} onLogout={handleLogout} authLoading={!authChecked} />}
+        />
+        <Route
+          path="/admin-reservations"
+          element={<AdminReservations user={user} onLogout={handleLogout} authChecked={authChecked} />}
+        />
+        <Route
+          path="/admin-users"
+          element={<AdminUsers user={user} onLogout={handleLogout} authChecked={authChecked} />}
         />
         <Route
           path="/spaces"
