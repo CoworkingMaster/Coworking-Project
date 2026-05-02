@@ -108,6 +108,18 @@ button, input, select, textarea {
     padding: 0 var(--space-lg);
 }
 
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 var(--space-md);
+    }
+}
+
+@media (max-width: 640px) {
+    .container {
+        padding: 0 12px;
+    }
+}
+
 /* ─── SECTION HEADERS ─── */
 .section-header {
     text-align: center;

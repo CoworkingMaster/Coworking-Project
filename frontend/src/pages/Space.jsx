@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import CoworkingScene from "../components/CoworkingScene"
 import BookingPanel from "../components/BookingPanel"
 import { apiFetch } from "../utils/api"
+import "./Space.css"
 
 function getInitialBookingRangeISO() {
   const now = new Date()
@@ -59,52 +61,55 @@ export default function Spaces({ user, onShowToast }) {
     return () => clearInterval(interval)
   }, [bookingStart, bookingEnd])
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1)
+      return
+    }
+    navigate("/dashboard")
+  }
+
 
   return (
-
-    <div style={{ height:"100vh", display:"flex", position:"relative" }}>
-
-      {/* BARRA SUPERIOR */}
-
-      <div
-        style={{
-          position:"absolute",
-          top:20,
-          left:"50%",
-          transform:"translateX(-50%)",
-          background:"rgba(255,255,255,0.9)",
-          padding:"8px 16px",
-          borderRadius:"10px",
-          fontSize:"14px",
-          fontWeight:500,
-          zIndex:10
-        }}
-      >
-        Mostrando disponibilidad
-
-        {" "}
-        {bookingStart?.replace("T"," ").slice(0,16)}
-
-        {" - "}
-
-        {bookingEnd?.slice(11,16)}
-
+    <div className="spaces-page">
+      <div className="spaces-toolbar">
+        <button type="button" className="spaces-back-btn" onClick={handleBack}>
+          ← Atrás
+        </button>
       </div>
 
+      <div className="spaces-layout">
+        <div className="spaces-scene-shell">
+          <div className="spaces-availability">
+            Mostrando disponibilidad{" "}
+            {bookingStart?.replace("T"," ").slice(0,16)}
+            {" - "}
+            {bookingEnd?.slice(11,16)}
+          </div>
 
-      {/* ESCENA 3D */}
+          <div className="spaces-scene-canvas">
+            <CoworkingScene
+              viewMode="3d"
+              onRoomSelect={setSelectedRoom}
+              selectedRoomId={selectedRoom?.id}
+              occupiedSpaces={occupiedSpaces}
+              myReservations={myReservations}
+              reservationsInfo={reservationsInfo}
+            />
+          </div>
+        </div>
 
-      <div style={{ flex:1 }}>
-
-        <CoworkingScene
-          viewMode="3d"
-          onRoomSelect={setSelectedRoom}
-          selectedRoomId={selectedRoom?.id}
+        <BookingPanel
+          selectedRoom={selectedRoom}
+          onClose={() => setSelectedRoom(null)}
+          setBookingStart={setBookingStart}
+          setBookingEnd={setBookingEnd}
           occupiedSpaces={occupiedSpaces}
-          myReservations={myReservations}
-          reservationsInfo={reservationsInfo}
+          fetchOccupied={fetchOccupied}
+          bookingStart={bookingStart}
+          bookingEnd={bookingEnd}
+          onShowToast={onShowToast}
         />
-
       </div>
 
 

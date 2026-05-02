@@ -1,17 +1,32 @@
-import { useState, useCallback } from 'react'
-import { Suspense } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import CoworkingScene from '../components/CoworkingScene'
 import BookingPanel from '../components/BookingPanel'
 import './Viewer3DSection.css'
-import { useEffect } from 'react'
 import { apiFetch } from '../utils/api'
+
+function getInitialBookingRangeISO() {
+  const now = new Date()
+  const start = new Date(now)
+  start.setHours(now.getHours(), 0, 0, 0)
+  const end = new Date(start)
+  end.setHours(start.getHours() + 2)
+  return {
+    startISO: start.toISOString().slice(0, 16),
+    endISO: end.toISOString().slice(0, 16),
+  }
+}
+
+const INITIAL_BOOKING = getInitialBookingRangeISO()
 
 export default function Viewer3DSection({ onShowToast }) {
   const [selectedRoom, setSelectedRoom] = useState(null)
   const [viewMode, setViewMode] = useState('3d')
+  const [sceneKey, setSceneKey] = useState(0)
   const [occupiedSpaces, setOccupiedSpaces] = useState([])
-  const [bookingStart, setBookingStart] = useState(null)
-  const [bookingEnd, setBookingEnd] = useState(null)
+  const [myReservations, setMyReservations] = useState([])
+  const [reservationsInfo, setReservationsInfo] = useState([])
+  const [bookingStart, setBookingStart] = useState(INITIAL_BOOKING.startISO)
+  const [bookingEnd, setBookingEnd] = useState(INITIAL_BOOKING.endISO)
 
 
 const fetchOccupied = (start, end) => {
@@ -19,13 +34,23 @@ const fetchOccupied = (start, end) => {
   if(!start || !end) return
 
   apiFetch(`/api/reservations/occupied/?fecha_inicio=${start}&fecha_fin=${end}`)
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) throw new Error()
+      return res.json()
+    })
     .then(data => {
-      setOccupiedSpaces(data?.occupied_spaces || [])
+      setOccupiedSpaces(Array.isArray(data?.occupied_spaces) ? data.occupied_spaces : [])
+      setMyReservations(Array.isArray(data?.my_reservations) ? data.my_reservations : [])
+      setReservationsInfo(Array.isArray(data?.reservations) ? data.reservations : [])
     })
     .catch(() => {})
 
 }
+
+  useEffect(() => {
+    fetchOccupied(INITIAL_BOOKING.startISO, INITIAL_BOOKING.endISO)
+  }, [])
+
   useEffect(() => {
 
   if(!bookingStart || !bookingEnd) return
@@ -33,6 +58,14 @@ const fetchOccupied = (start, end) => {
   fetchOccupied(bookingStart, bookingEnd)
 
 }, [bookingStart, bookingEnd])
+
+  useEffect(() => {
+    if (!bookingStart || !bookingEnd) return
+    const interval = setInterval(() => {
+      fetchOccupied(bookingStart, bookingEnd)
+    }, 30000)
+    return () => clearInterval(interval)
+  }, [bookingStart, bookingEnd])
 
   const handleRoomSelect = useCallback((room) => {
     setSelectedRoom(room)
@@ -57,14 +90,15 @@ const fetchOccupied = (start, end) => {
       <div className="viewer-wrapper">
         <div className="viewer-container">
           <div className="viewer-canvas">
-            <Suspense fallback={<div className="viewer-loading">Cargando escena 3D...</div>}>
-              <CoworkingScene
+            <CoworkingScene
+              key={sceneKey}
               onRoomSelect={handleRoomSelect}
               selectedRoomId={selectedRoom?.id}
               occupiedSpaces={occupiedSpaces}
+              myReservations={myReservations}
+              reservationsInfo={reservationsInfo}
               viewMode={viewMode}
-              />
-            </Suspense>
+            />
           </div>
 
           {/* Controls */}
@@ -72,7 +106,10 @@ const fetchOccupied = (start, end) => {
             <button
               className="viewer-control-btn"
               title="Resetear vista"
-              onClick={() => setViewMode(v => v === '3d' ? '3d-reset' : '3d')}
+              onClick={() => {
+                setViewMode('3d')
+                setSceneKey(k => k + 1)
+              }}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M1 4v6h6M23 20v-6h-6" />

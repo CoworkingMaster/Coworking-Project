@@ -5,8 +5,33 @@ export const PLAN_LABELS = {
 }
 
 export const QUICK_ACTIONS = [
-  { icon: '📅', title: 'Reservar espacio', desc: 'Encuentra y reserva tu sala o escritorio', link: '/spaces' },
-  { icon: '🗓️', title: 'Mis reservas', desc: 'Consulta y gestiona tus reservas activas', link: '/reservations' },
-  { icon: '👤', title: 'Mi perfil', desc: 'Actualiza tus datos personales y plan', link: '/dashboard/profile' },
-  { icon: '📊', title: 'Estadísticas', desc: 'Revisa tu actividad en WorkHub', link: null },
+  {
+    id: 'book-space',
+    icon: '📅',
+    title: 'Reservar espacio',
+    desc: 'Encuentra y reserva tu sala o escritorio',
+    link: '/spaces',
+  },
+  {
+    id: 'my-bookings',
+    icon: '🗓️',
+    title: 'Mis reservas',
+    desc: 'Consulta y gestiona tus reservas activas',
+    link: '/reservations',
+  },
+  {
+    id: 'profile',
+    icon: '👤',
+    title: 'Mi perfil',
+    desc: 'Actualiza tus datos personales y plan',
+    link: '/dashboard/profile',
+  },
+  {
+    id: 'admin-analytics',
+    icon: '📊',
+    title: 'Estadísticas',
+    desc: 'Panel avanzado con métricas de usuarios y reservas',
+    link: '/admin-analytics',
+    adminOnly: true,
+  },
 ]

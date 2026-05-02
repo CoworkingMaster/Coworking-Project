@@ -30,7 +30,8 @@
 }
 
 .feature-card {
-  width: 320px;
+  width: 100%;
+  max-width: 320px;
   height: 204px;
   background: #fff;
   border-radius: 22px;
@@ -91,6 +92,10 @@
 @media (max-width: 900px) {
   .features-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .feature-card {
+    max-width: 100%;
   }
 }
 

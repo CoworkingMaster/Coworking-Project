@@ -157,11 +157,31 @@
     .viewer-canvas {
         height: 450px;
     }
+
+    .viewer-panel {
+        min-width: 0;
+        max-width: 100%;
+    }
 }
 
 @media (max-width: 768px) {
     .viewer-instructions {
         display: none;
+    }
+
+    .viewer-wrapper {
+        padding: 0 12px;
+    }
+
+    .viewer-canvas {
+        height: 380px;
+    }
+
+    .viewer-legend {
+        right: var(--space-md);
+        left: var(--space-md);
+        justify-content: center;
+        flex-wrap: wrap;
     }
 }
 

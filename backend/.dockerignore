@@ -17,6 +17,9 @@ build/
 env/
 venv/
 ENV/
+.tmp/
+.cache/
+db.sqlite3
 
 # Tests y coverage
 .pytest_cache/

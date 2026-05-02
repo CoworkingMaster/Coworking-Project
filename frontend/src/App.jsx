@@ -15,6 +15,7 @@ import ContactSection from './sections/ContactSection'
 import Dashboard from './pages/Dashboard'
 import DashboardProfile from './pages/DashboardProfile'
 import DashboardSubscription from './pages/DashboardSubscription'
+import AdminAnalytics from './pages/AdminAnalytics'
 import Reservations from './pages/Reservations'
 import ResetPassword from './pages/ResetPassword'
 import Spaces from './pages/Space'
@@ -109,6 +110,7 @@ function App() {
 
   // Al montar, intenta recuperar la sesión activa desde la cookie
   useEffect(() => {
+    setAuthLoading(true)
     apiFetch('/api/me/')
       .then(r => r.ok ? r.json() : null)
       .then(data => { if (data) setUser(data) })
@@ -216,4 +218,3 @@ function App() {
 }
 
 export default App
-

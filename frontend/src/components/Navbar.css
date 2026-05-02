@@ -172,7 +172,7 @@
     background: var(--color-bg-hover);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .nav-links,
     .nav-actions {
         display: none;
@@ -180,5 +180,15 @@
 
     .hamburger {
         display: flex;
+    }
+
+    .nav-container {
+        padding: 0 var(--space-md);
+    }
+}
+
+@media (max-width: 640px) {
+    .nav-container {
+        padding: 0 12px;
     }
 }
