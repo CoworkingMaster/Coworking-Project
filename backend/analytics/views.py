@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime, time, timedelta
 from decimal import Decimal
 
@@ -30,6 +31,11 @@ WEEKDAY_LABELS = {
     6: "Sabado",
     7: "Domingo",
 }
+
+ROOM_ANALYTICS_DAYS = 30
+OPERATING_START_HOUR = 8
+OPERATING_END_HOUR = 20
+PRIME_TIME_WINDOWS = ((9, 11), (16, 18))
 
 
 def start_of_day(local_day):
@@ -91,6 +97,44 @@ def overlapping_hours(interval_start, interval_end, window_start, window_end):
     return (end - start).total_seconds() / 3600
 
 
+def overlap_hours_for_daily_window(interval_start, interval_end, period_start, period_end, start_hour, end_hour):
+    clipped_start = max(interval_start, period_start)
+    clipped_end = min(interval_end, period_end)
+    if clipped_end <= clipped_start:
+        return 0.0
+
+    tz = timezone.get_current_timezone()
+    start_local = timezone.localtime(clipped_start, tz)
+    end_local = timezone.localtime(clipped_end, tz)
+
+    cursor_day = start_local.date()
+    last_day = end_local.date()
+    total = 0.0
+
+    while cursor_day <= last_day:
+        day_start = timezone.make_aware(datetime.combine(cursor_day, time.min), tz)
+        window_start = day_start + timedelta(hours=start_hour)
+        window_end = day_start + timedelta(hours=end_hour)
+        total += overlapping_hours(clipped_start, clipped_end, window_start, window_end)
+        cursor_day += timedelta(days=1)
+
+    return total
+
+
+def overlap_hours_for_prime_windows(interval_start, interval_end, period_start, period_end, windows):
+    total = 0.0
+    for start_hour, end_hour in windows:
+        total += overlap_hours_for_daily_window(
+            interval_start,
+            interval_end,
+            period_start,
+            period_end,
+            start_hour,
+            end_hour,
+        )
+    return total
+
+
 class AdminAnalyticsOverviewView(APIView):
     permission_classes = [IsAnalyticsAdmin]
 
@@ -141,7 +185,7 @@ class AdminAnalyticsOverviewView(APIView):
                 }
             )
 
-        # --- Reservas ---
+        # --- Reservas globales ---
         non_cancelled_reservations = Reserva.objects.exclude(estado="cancelada")
         reservation_totals = Reserva.objects.aggregate(
             total=Count("id"),
@@ -280,6 +324,197 @@ class AdminAnalyticsOverviewView(APIView):
             else 0.0
         )
 
+        # --- Analiticas de salas (uso real) ---
+        room_period_end = tomorrow_start
+        room_period_start = room_period_end - timedelta(days=ROOM_ANALYTICS_DAYS)
+
+        rooms = list(
+            Espacio.objects.filter(tipo="sala").values("id", "nombre", "capacidad")
+        )
+        room_count = len(rooms)
+
+        room_rows = list(
+            Reserva.objects.filter(
+                espacio__tipo="sala",
+                fecha_inicio__lt=room_period_end,
+                fecha_fin__gt=room_period_start,
+            )
+            .values(
+                "id",
+                "estado",
+                "fecha_inicio",
+                "fecha_fin",
+                "espacio_id",
+                "espacio__nombre",
+                "espacio__capacidad",
+            )
+        )
+
+        room_metrics = {
+            room["id"]: {
+                "room_id": room["id"],
+                "room_name": room["nombre"],
+                "capacity": room["capacidad"],
+                "reservations_count": 0,
+                "cancellations_count": 0,
+                "reserved_operational_hours": 0.0,
+                "reserved_prime_hours": 0.0,
+                "total_duration_hours": 0.0,
+            }
+            for room in rooms
+        }
+
+        operational_hours_per_day = max(OPERATING_END_HOUR - OPERATING_START_HOUR, 0)
+        operational_capacity_per_room = operational_hours_per_day * ROOM_ANALYTICS_DAYS
+
+        prime_hours_per_day = sum(max(end - start, 0) for start, end in PRIME_TIME_WINDOWS)
+        prime_capacity_per_room = prime_hours_per_day * ROOM_ANALYTICS_DAYS
+
+        total_room_reserved_operational_hours = 0.0
+        total_room_reserved_prime_hours = 0.0
+        room_cancelled_requests = 0
+        room_non_cancelled_requests = 0
+
+        heatmap = defaultdict(lambda: defaultdict(float))
+
+        for row in room_rows:
+            metric = room_metrics.get(row["espacio_id"])
+            if metric is None:
+                continue
+
+            if row["estado"] == "cancelada":
+                metric["cancellations_count"] += 1
+                room_cancelled_requests += 1
+                continue
+
+            metric["reservations_count"] += 1
+            room_non_cancelled_requests += 1
+
+            start_dt = row["fecha_inicio"]
+            end_dt = row["fecha_fin"]
+
+            full_duration_hours = max((end_dt - start_dt).total_seconds() / 3600, 0)
+            metric["total_duration_hours"] += full_duration_hours
+
+            reserved_operational = overlap_hours_for_daily_window(
+                start_dt,
+                end_dt,
+                room_period_start,
+                room_period_end,
+                OPERATING_START_HOUR,
+                OPERATING_END_HOUR,
+            )
+            metric["reserved_operational_hours"] += reserved_operational
+            total_room_reserved_operational_hours += reserved_operational
+
+            reserved_prime = overlap_hours_for_prime_windows(
+                start_dt,
+                end_dt,
+                room_period_start,
+                room_period_end,
+                PRIME_TIME_WINDOWS,
+            )
+            metric["reserved_prime_hours"] += reserved_prime
+            total_room_reserved_prime_hours += reserved_prime
+
+            local_start = timezone.localtime(start_dt)
+            hour = local_start.hour
+            weekday = local_start.isoweekday()
+            if OPERATING_START_HOUR <= hour < OPERATING_END_HOUR:
+                heatmap[weekday][hour] += 1
+
+        room_capacity_hours_total = room_count * operational_capacity_per_room
+        room_prime_capacity_hours_total = room_count * prime_capacity_per_room
+
+        room_occupancy_operational_rate = (
+            round((total_room_reserved_operational_hours / room_capacity_hours_total) * 100, 2)
+            if room_capacity_hours_total > 0
+            else 0.0
+        )
+        room_prime_time_fill_rate = (
+            round((total_room_reserved_prime_hours / room_prime_capacity_hours_total) * 100, 2)
+            if room_prime_capacity_hours_total > 0
+            else 0.0
+        )
+
+        total_room_requests = room_non_cancelled_requests + room_cancelled_requests
+        room_cancellation_rate = (
+            round((room_cancelled_requests / total_room_requests) * 100, 2)
+            if total_room_requests > 0
+            else 0.0
+        )
+
+        room_performance = []
+        for room_id, metric in room_metrics.items():
+            occupancy_rate = (
+                round((metric["reserved_operational_hours"] / operational_capacity_per_room) * 100, 2)
+                if operational_capacity_per_room > 0
+                else 0.0
+            )
+            room_requests = metric["reservations_count"] + metric["cancellations_count"]
+            cancellation_rate = (
+                round((metric["cancellations_count"] / room_requests) * 100, 2)
+                if room_requests > 0
+                else 0.0
+            )
+            avg_duration = (
+                round(metric["total_duration_hours"] / metric["reservations_count"], 2)
+                if metric["reservations_count"] > 0
+                else 0.0
+            )
+            prime_time_fill = (
+                round((metric["reserved_prime_hours"] / prime_capacity_per_room) * 100, 2)
+                if prime_capacity_per_room > 0
+                else 0.0
+            )
+
+            room_performance.append(
+                {
+                    "room_id": room_id,
+                    "room_name": metric["room_name"],
+                    "capacity": metric["capacity"],
+                    "reservations_count": metric["reservations_count"],
+                    "cancellations_count": metric["cancellations_count"],
+                    "occupancy_rate_operational": occupancy_rate,
+                    "reserved_operational_hours": truncate_decimal(metric["reserved_operational_hours"]),
+                    "capacity_operational_hours": operational_capacity_per_room,
+                    "cancellation_rate": cancellation_rate,
+                    "average_duration_hours": avg_duration,
+                    "prime_time_fill_rate": prime_time_fill,
+                }
+            )
+
+        room_performance.sort(
+            key=lambda item: (
+                item["occupancy_rate_operational"],
+                item["reservations_count"],
+                -item["cancellation_rate"],
+            ),
+            reverse=True,
+        )
+
+        overloaded_rooms = sum(1 for item in room_performance if item["occupancy_rate_operational"] >= 80)
+        underutilized_rooms = sum(1 for item in room_performance if item["occupancy_rate_operational"] <= 20)
+
+        room_usage_heatmap = []
+        for weekday in range(1, 8):
+            hours = []
+            for hour in range(OPERATING_START_HOUR, OPERATING_END_HOUR):
+                hours.append(
+                    {
+                        "hour": hour,
+                        "label": f"{hour:02d}:00",
+                        "value": int(heatmap[weekday].get(hour, 0)),
+                    }
+                )
+            room_usage_heatmap.append(
+                {
+                    "weekday": weekday,
+                    "label": WEEKDAY_LABELS[weekday],
+                    "hours": hours,
+                }
+            )
+
         payload = {
             "generated_at": now.isoformat(),
             "users": {
@@ -312,6 +547,28 @@ class AdminAnalyticsOverviewView(APIView):
                     reservations_daily_start.date(), 14, reservations_daily_map
                 ),
                 "weekly_series_last_12_weeks": reservations_weekly_series,
+            },
+            "rooms": {
+                "period_days": ROOM_ANALYTICS_DAYS,
+                "operating_window": {
+                    "start_hour": OPERATING_START_HOUR,
+                    "end_hour": OPERATING_END_HOUR,
+                },
+                "total_rooms": room_count,
+                "total_requests": total_room_requests,
+                "non_cancelled_requests": room_non_cancelled_requests,
+                "cancelled_requests": room_cancelled_requests,
+                "occupancy_rate_operational": room_occupancy_operational_rate,
+                "cancellation_rate": room_cancellation_rate,
+                "prime_time_fill_rate": room_prime_time_fill_rate,
+                "reserved_operational_hours": truncate_decimal(total_room_reserved_operational_hours),
+                "capacity_operational_hours": int(room_capacity_hours_total),
+                "overloaded_rooms": overloaded_rooms,
+                "underutilized_rooms": underutilized_rooms,
+                "top_by_occupancy": room_performance[:5],
+                "bottom_by_occupancy": sorted(room_performance, key=lambda item: item["occupancy_rate_operational"])[:5],
+                "performance": room_performance,
+                "usage_heatmap": room_usage_heatmap,
             },
         }
 

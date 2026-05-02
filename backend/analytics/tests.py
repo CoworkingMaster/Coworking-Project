@@ -104,6 +104,7 @@ class AdminAnalyticsOverviewTests(APITestCase):
         self.assertIn("users", payload)
         self.assertIn("plans", payload)
         self.assertIn("reservations", payload)
+        self.assertIn("rooms", payload)
 
         self.assertEqual(payload["users"]["total"], 4)
         self.assertEqual(payload["reservations"]["total"], 4)
@@ -119,3 +120,11 @@ class AdminAnalyticsOverviewTests(APITestCase):
         top_spaces = payload["reservations"]["top_spaces"]
         self.assertGreaterEqual(len(top_spaces), 1)
         self.assertEqual(top_spaces[0]["nombre"], "Sala North")
+
+        rooms = payload["rooms"]
+        self.assertGreaterEqual(rooms["total_rooms"], 1)
+        self.assertGreaterEqual(rooms["total_requests"], 1)
+        self.assertGreaterEqual(rooms["occupancy_rate_operational"], 0)
+        self.assertIn("usage_heatmap", rooms)
+        self.assertEqual(len(rooms["usage_heatmap"]), 7)
+        self.assertIn("top_by_occupancy", rooms)
