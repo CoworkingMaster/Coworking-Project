@@ -9,8 +9,11 @@ from users.views import (
     password_reset_request,
     password_reset_confirm,
     google_login,
+    AdminUserListView,
+    AdminUserDetailView,
 )
 from users.subscription_views import subscription_detail, subscription_cancel
+from reservations.views import AdminReservationListView, AdminReservationDetailView
 
 
 def health_check(request):
@@ -44,4 +47,10 @@ urlpatterns = [
     # Suscripción
     path('api/subscription/', subscription_detail, name='subscription'),
     path('api/subscription/cancel/', subscription_cancel, name='subscription-cancel'),
+
+    # Admin — gestión
+    path('api/admin/reservations/', AdminReservationListView.as_view(), name='admin-reservations'),
+    path('api/admin/reservations/<int:pk>/', AdminReservationDetailView.as_view(), name='admin-reservation-detail'),
+    path('api/admin/users/', AdminUserListView.as_view(), name='admin-users'),
+    path('api/admin/users/<int:pk>/', AdminUserDetailView.as_view(), name='admin-user-detail'),
 ]

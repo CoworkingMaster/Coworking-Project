@@ -63,6 +63,29 @@ Aplicación web full-stack para gestión de un coworking con vista 3D interactiv
    docker compose exec backend python manage.py createsuperuser
    ```
 
+7. **Cargar datos de prueba** (opcional):
+   ```bash
+   # Crea espacios (puestos y salas)
+   docker compose exec backend python manage.py seed_spaces
+
+   # Crea 6 usuarios demo con reservas pasadas y futuras
+   docker compose exec backend python manage.py seed_demo
+
+   # Para borrar y recrear los datos demo
+   docker compose exec backend python manage.py seed_demo --flush
+   ```
+
+   Usuarios demo creados (contraseña: `demo1234`):
+
+   | Email | Plan |
+   |-------|------|
+   | ana.garcia@demo.com | Standard |
+   | carlos.ruiz@demo.com | Premium |
+   | sofia.martin@demo.com | Premium |
+   | luis.torres@demo.com | SuperPro |
+   | marta.lopez@demo.com | Standard |
+   | pablo.sanchez@demo.com | SuperPro |
+
 ### Comandos útiles
 
 ```bash

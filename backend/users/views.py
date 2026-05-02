@@ -8,7 +8,10 @@ from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework import status
+from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
 from .models import PasswordResetToken, ROLE_CHOICES
 from .email_utils import send_password_reset_email
@@ -446,6 +449,106 @@ def google_login(request):
         "user": _user_payload(user),
         "created": created,
     })
+
+
+# ──────────────────────────────────────────────────────────
+# ADMIN — GESTIÓN DE USUARIOS
+# ──────────────────────────────────────────────────────────
+
+_ADMIN_PAGE_SIZE = 20
+
+
+class AdminUserListView(APIView):
+    def get_permissions(self):
+        from analytics.permissions import IsAnalyticsAdmin
+        return [IsAnalyticsAdmin()]
+
+    def get(self, request):
+        qs = User.objects.filter(is_staff=False).order_by('-date_joined')
+
+        role = request.GET.get('role', '').strip()
+        is_active = request.GET.get('is_active', '').strip()
+        search = request.GET.get('search', '').strip()
+
+        if role:
+            qs = qs.filter(role=role)
+        if is_active in ('true', 'false'):
+            qs = qs.filter(is_active=(is_active == 'true'))
+        if search:
+            qs = qs.filter(
+                Q(email__icontains=search) |
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(company__icontains=search)
+            )
+
+        total = qs.count()
+        try:
+            page = max(1, int(request.GET.get('page', 1)))
+        except (ValueError, TypeError):
+            page = 1
+        num_pages = max(1, (total + _ADMIN_PAGE_SIZE - 1) // _ADMIN_PAGE_SIZE)
+        page = min(page, num_pages)
+        offset = (page - 1) * _ADMIN_PAGE_SIZE
+        qs = qs[offset: offset + _ADMIN_PAGE_SIZE]
+
+        return Response({
+            'count': total,
+            'num_pages': num_pages,
+            'page': page,
+            'page_size': _ADMIN_PAGE_SIZE,
+            'results': [_admin_user_payload(u) for u in qs],
+        })
+
+
+class AdminUserDetailView(APIView):
+    def get_permissions(self):
+        from analytics.permissions import IsAnalyticsAdmin
+        return [IsAnalyticsAdmin()]
+
+    def patch(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        update_fields = []
+        allowed_roles = {c[0] for c in ROLE_CHOICES}
+
+        if 'role' in request.data:
+            new_role = str(request.data['role']).strip()
+            if new_role not in allowed_roles:
+                return Response({'error': 'Plan no válido'}, status=status.HTTP_400_BAD_REQUEST)
+            user.role = new_role
+            update_fields.append('role')
+
+        if 'is_active' in request.data:
+            user.is_active = bool(request.data['is_active'])
+            update_fields.append('is_active')
+
+        if 'is_staff' in request.data:
+            user.is_staff = bool(request.data['is_staff'])
+            update_fields.append('is_staff')
+
+        if update_fields:
+            user.save(update_fields=update_fields)
+            user.refresh_from_db()
+
+        return Response(_admin_user_payload(user))
+
+
+def _admin_user_payload(u):
+    return {
+        'id': u.pk,
+        'username': u.username,
+        'email': u.email,
+        'first_name': u.first_name,
+        'last_name': u.last_name,
+        'phone': u.phone,
+        'company': u.company,
+        'job_title': u.job_title,
+        'role': u.role,
+        'is_active': u.is_active,
+        'is_staff': u.is_staff,
+        'is_superuser': u.is_superuser,
+        'date_joined': u.date_joined.isoformat() if u.date_joined else None,
+    }
 
 
 # ──────────────────────────────────────────────────────────

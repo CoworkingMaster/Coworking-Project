@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apiFetch } from '../utils/api'
+import AdminNav from '../components/AdminNav'
 import './AdminAnalytics.css'
 
 const isAdminUser = (u) => Boolean(u?.is_staff || u?.is_superuser)
@@ -107,7 +108,6 @@ export default function AdminAnalytics({ user, onLogout, authLoading = false }) 
   const [error, setError] = useState('')
   const [data, setData] = useState(null)
 
-  const initials = `${user?.first_name?.[0] ?? ''}${user?.last_name?.[0] ?? ''}`.toUpperCase() || user?.email?.[0]?.toUpperCase()
   const isAdmin = isAdminUser(user)
 
   const fetchAnalytics = useCallback(async () => {
@@ -195,24 +195,7 @@ export default function AdminAnalytics({ user, onLogout, authLoading = false }) 
 
   return (
     <div className="analytics-page">
-      <header className="analytics-header">
-        <div className="analytics-header-inner">
-          <a href="/" className="analytics-logo">
-            <span className="analytics-logo-icon">◆</span>
-            <span className="analytics-logo-text">WorkHub</span>
-          </a>
-          <nav className="analytics-nav">
-            <button className="analytics-nav-link" onClick={() => navigate('/dashboard')}>Inicio</button>
-            <button className="analytics-nav-link" onClick={() => navigate('/reservations')}>Mis reservas</button>
-            <button className="analytics-nav-link active">Analiticas</button>
-          </nav>
-          <div className="analytics-header-actions">
-            <div className="analytics-badge">Admin</div>
-            <div className="analytics-avatar">{initials}</div>
-            <button className="analytics-logout-btn" onClick={onLogout}>Cerrar sesion</button>
-          </div>
-        </div>
-      </header>
+      <AdminNav user={user} onLogout={onLogout} active="analytics" />
 
       <main className="analytics-main">
         <section className="analytics-top">

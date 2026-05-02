@@ -1,0 +1,313 @@
+/* ── Filtros ─────────────────────────────────────────────── */
+.mgmt-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+  margin-bottom: var(--space-lg);
+}
+
+.mgmt-search {
+  flex: 1;
+  min-width: 220px;
+  height: 40px;
+  padding: 0 var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-size: 14px;
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.mgmt-search:focus {
+  border-color: var(--color-primary);
+}
+
+.mgmt-select {
+  height: 40px;
+  padding: 0 var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-size: 14px;
+  color: var(--color-text);
+  cursor: pointer;
+}
+.mgmt-select-full {
+  width: 100%;
+}
+
+.mgmt-search-btn {
+  height: 40px;
+  white-space: nowrap;
+}
+
+/* ── Tabla ───────────────────────────────────────────────── */
+.mgmt-table-wrap {
+  overflow-x: auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+
+.mgmt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mgmt-table thead th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-warm);
+  white-space: nowrap;
+}
+
+.mgmt-table tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  transition: background 0.12s;
+}
+.mgmt-table tbody tr:last-child {
+  border-bottom: none;
+}
+.mgmt-table tbody tr:hover {
+  background: var(--color-bg-warm);
+}
+.mgmt-row-updating {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.mgmt-table td {
+  padding: 12px 16px;
+  vertical-align: middle;
+}
+
+.mgmt-id {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  width: 40px;
+}
+
+.mgmt-cell-main {
+  font-weight: 500;
+  color: var(--color-text);
+}
+.mgmt-cell-sub {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+.mgmt-cell-empty {
+  color: var(--color-text-secondary);
+}
+
+.mgmt-date {
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.mgmt-phone {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.mgmt-empty {
+  padding: var(--space-2xl);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+/* ── Badges de estado ────────────────────────────────────── */
+.mgmt-status {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+.status-active  { background: #d1fae5; color: #065f46; }
+.status-done    { background: #e0e7ff; color: #3730a3; }
+.status-cancelled { background: #fee2e2; color: #991b1b; }
+
+/* ── Badges de plan ──────────────────────────────────────── */
+.mgmt-role {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.role-standard  { background: #dbeafe; color: #1e40af; }
+.role-premium   { background: #ede9fe; color: #6d28d9; }
+.role-enterprise { background: #fef3c7; color: #92400e; }
+
+/* ── Badges staff/super ──────────────────────────────────── */
+.mgmt-badge-staff,
+.mgmt-badge-super {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+}
+.mgmt-badge-staff { background: #f0f9ff; color: #0369a1; }
+.mgmt-badge-super { background: #fef9c3; color: #854d0e; }
+
+/* ── Botones de acción ───────────────────────────────────── */
+.mgmt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.mgmt-btn {
+  padding: 5px 12px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: opacity 0.15s;
+}
+.mgmt-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.mgmt-btn-activate  { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+.mgmt-btn-finalize  { background: #e0e7ff; color: #3730a3; border-color: #a5b4fc; }
+.mgmt-btn-cancel    { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+.mgmt-btn-delete    { background: #fef2f2; color: #b91c1c; border-color: #fca5a5; }
+.mgmt-btn-edit      { background: var(--color-bg-warm); color: var(--color-text); border-color: var(--color-border); }
+.mgmt-btn-secondary { background: var(--color-bg-warm); color: var(--color-text); border-color: var(--color-border); }
+
+/* ── Paginación ──────────────────────────────────────────── */
+.mgmt-table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  padding: 14px 16px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-warm);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+}
+
+.mgmt-count {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.mgmt-pagination {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mgmt-page-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--color-text);
+  transition: background 0.12s, border-color 0.12s;
+}
+.mgmt-page-btn:hover:not(:disabled) {
+  background: var(--color-bg-warm);
+  border-color: var(--color-primary);
+}
+.mgmt-page-btn.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+}
+.mgmt-page-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.mgmt-page-ellipsis {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  padding: 0 4px;
+}
+
+/* ── Modal de edición ────────────────────────────────────── */
+.mgmt-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+}
+
+.mgmt-modal {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-xl);
+  width: min(440px, 92vw);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.mgmt-modal-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+.mgmt-modal-sub {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-top: -8px;
+}
+
+.mgmt-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.mgmt-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mgmt-toggle {
+  padding: 5px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.mgmt-toggle.on  { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+.mgmt-toggle.off { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+
+.mgmt-modal-actions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: flex-end;
+  margin-top: var(--space-sm);
+}
