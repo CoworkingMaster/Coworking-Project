@@ -64,7 +64,7 @@ function formatRenewal(iso) {
   }
 }
 
-export default function DashboardProfile({ user, onLogout, onUserUpdate, showToast }) {
+export default function DashboardProfile({ user, onLogout, onUserUpdate, showToast, authChecked }) {
   const navigate = useNavigate()
   const fileInputRef = useRef(null)
 
@@ -91,7 +91,7 @@ export default function DashboardProfile({ user, onLogout, onUserUpdate, showToa
 
   useEffect(() => {
     if (!user) {
-      navigate('/')
+      if (authChecked) navigate('/')
       return
     }
     const next = {
@@ -104,7 +104,7 @@ export default function DashboardProfile({ user, onLogout, onUserUpdate, showToa
     }
     setForm(next)
     setBaseline(next)
-  }, [user, navigate])
+  }, [user, authChecked, navigate])
 
   useEffect(() => {
     if (!user?.id) return

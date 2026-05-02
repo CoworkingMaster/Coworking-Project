@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, PasswordResetToken
+from .models import User, PasswordResetToken, Subscription, SubscriptionHistory
 
 
 @admin.register(User)
@@ -36,3 +36,23 @@ class PasswordResetTokenAdmin(admin.ModelAdmin):
     list_filter = ('used',)
     search_fields = ('user__email',)
     readonly_fields = ('token', 'created_at')
+
+
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = ('user', 'plan_display', 'billing_cycle', 'status', 'current_period_end', 'updated_at')
+    list_filter = ('billing_cycle', 'status')
+    search_fields = ('user__email',)
+    readonly_fields = ('created_at', 'updated_at')
+
+    def plan_display(self, obj):
+        return obj.user.role
+    plan_display.short_description = 'Plan'
+
+
+@admin.register(SubscriptionHistory)
+class SubscriptionHistoryAdmin(admin.ModelAdmin):
+    list_display = ('user', 'action', 'plan', 'billing_cycle', 'created_at')
+    list_filter = ('action', 'plan', 'billing_cycle')
+    search_fields = ('user__email',)
+    readonly_fields = ('user', 'plan', 'billing_cycle', 'action', 'created_at')

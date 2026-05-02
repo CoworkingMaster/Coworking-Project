@@ -97,7 +97,7 @@ function LandingPage({ user, onLoginClick, onRegisterClick, onShowToast, loginOp
 // ── App raíz con router ──────────────────────────────────
 function App() {
   const [user, setUser] = useState(null)
-  const [authLoading, setAuthLoading] = useState(true)
+  const [authChecked, setAuthChecked] = useState(false)
   const [loginOpen, setLoginOpen] = useState(false)
   const [registerOpen, setRegisterOpen] = useState(false)
   const [forgotOpen, setForgotOpen] = useState(false)
@@ -115,7 +115,7 @@ function App() {
       .then(r => r.ok ? r.json() : null)
       .then(data => { if (data) setUser(data) })
       .catch(() => {})
-      .finally(() => setAuthLoading(false))
+      .finally(() => setAuthChecked(true))
   }, [])
 
   // Cierra modales con Escape
@@ -169,7 +169,7 @@ function App() {
         />
         <Route
           path="/dashboard"
-          element={<Dashboard user={user} onLogout={handleLogout} authLoading={authLoading} />}
+          element={<Dashboard user={user} onLogout={handleLogout} authChecked={authChecked} />}
         />
         <Route
           path="/dashboard/profile"
@@ -179,6 +179,7 @@ function App() {
               onLogout={handleLogout}
               onUserUpdate={handleUserSync}
               showToast={showToast}
+              authChecked={authChecked}
             />
           )}
         />
@@ -190,21 +191,18 @@ function App() {
               onLogout={handleLogout}
               onUserUpdate={handleUserSync}
               showToast={showToast}
+              authChecked={authChecked}
             />
           )}
         />
         <Route
-          path="/admin-analytics"
-          element={<AdminAnalytics user={user} onLogout={handleLogout} authLoading={authLoading} />}
-        />
-        <Route
           path="/spaces"
-          element={<Spaces onShowToast={showToast} />}
+          element={<Spaces user={user} onShowToast={showToast} />}
         />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route
           path="/reservations"
-          element={<Reservations user={user} onLogout={handleLogout} authLoading={authLoading} />}
+          element={<Reservations user={user} onLogout={handleLogout} authChecked={authChecked} />}
         />
       </Routes>
 

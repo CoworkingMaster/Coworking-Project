@@ -720,37 +720,50 @@
     color: var(--color-text);
 }
 
-@media (max-width: 1024px) {
-    .viewer-panel {
-        min-width: 0;
-        max-width: 100%;
-    }
 
-    .panel-header h3 {
-        max-width: 100%;
-    }
+/* ─── Plan upgrade wall ─── */
+.panel-upgrade {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 40px 24px;
+    gap: 12px;
+    flex: 1;
 }
 
-@media (max-width: 640px) {
-    .viewer-panel {
-        border-radius: var(--radius-xl);
-    }
+.panel-upgrade-icon {
+    font-size: 36px;
+    line-height: 1;
+}
 
-    .panel-header {
-        padding: var(--space-md) var(--space-md) var(--space-sm);
-    }
+.panel-upgrade-title {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-text);
+}
 
-    .panel-content {
-        padding: var(--space-sm) var(--space-sm) var(--space-md);
-    }
+.panel-upgrade-desc {
+    margin: 0;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+}
 
-    .slots-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
+.panel-upgrade-btn {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: var(--color-text);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: opacity 0.18s;
+}
 
-    .booking-summary-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
+.panel-upgrade-btn:hover {
+    opacity: 0.85;
 }

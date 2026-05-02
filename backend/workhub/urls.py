@@ -10,6 +10,7 @@ from users.views import (
     password_reset_confirm,
     google_login,
 )
+from users.subscription_views import subscription_detail, subscription_cancel
 
 
 def health_check(request):
@@ -39,4 +40,8 @@ urlpatterns = [
 
     # Google OAuth
     path('api/auth/google/', google_login, name='google-login'),
+
+    # Suscripción
+    path('api/subscription/', subscription_detail, name='subscription'),
+    path('api/subscription/cancel/', subscription_cancel, name='subscription-cancel'),
 ]

@@ -19,8 +19,7 @@ function getInitialBookingRangeISO() {
 
 const INITIAL_BOOKING = getInitialBookingRangeISO()
 
-export default function Spaces({ onShowToast }) {
-  const navigate = useNavigate()
+export default function Spaces({ user, onShowToast }) {
 
   const [selectedRoom, setSelectedRoom] = useState(null)
   const [occupiedSpaces, setOccupiedSpaces] = useState([])
@@ -112,6 +111,23 @@ export default function Spaces({ onShowToast }) {
           onShowToast={onShowToast}
         />
       </div>
+
+
+      {/* PANEL DE RESERVA */}
+
+      <BookingPanel
+        selectedRoom={selectedRoom}
+        onClose={() => setSelectedRoom(null)}
+        setBookingStart={setBookingStart}
+        setBookingEnd={setBookingEnd}
+        occupiedSpaces={occupiedSpaces}
+        fetchOccupied={fetchOccupied}
+        bookingStart={bookingStart}
+        bookingEnd={bookingEnd}
+        onShowToast={onShowToast}
+        user={user}
+      />
+
     </div>
 
   )
